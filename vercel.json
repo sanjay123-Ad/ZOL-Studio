@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/server"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/credits/monthly-reset",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
