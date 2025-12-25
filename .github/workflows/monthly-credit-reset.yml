@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Call Credit Reset Endpoint
         run: |
-          curl -X POST ${{ secrets.VERCEL_CREDIT_RESET_URL }} \
+          curl -L -X POST ${{ secrets.VERCEL_CREDIT_RESET_URL }} \
             -H "x-reset-secret: ${{ secrets.CREDIT_RESET_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\nHTTP Status: %{http_code}\n"
