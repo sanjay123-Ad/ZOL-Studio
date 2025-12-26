@@ -81,6 +81,8 @@ const BackgroundGalleryPage: React.FC<BackgroundGalleryPageProps> = ({ onBack })
   const [collection, setCollection] = useState<CollectionItem[]>([]);
   const [applyingBackgroundId, setApplyingBackgroundId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const closedViaBackButton = useRef<boolean>(false);
 
   useEffect(() => {
     const imageUrl = sessionStorage.getItem('image_for_background_change');
