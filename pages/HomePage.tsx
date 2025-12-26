@@ -15,11 +15,9 @@ const FeatureCard: React.FC<{
   subtitle: string;
   description: string;
   onClick: () => void;
-  tourId: string;
-}> = ({ icon, title, subtitle, description, onClick, tourId }) => (
+}> = ({ icon, title, subtitle, description, onClick }) => (
   <div 
     onClick={onClick}
-    data-tour-id={tourId}
     className="group relative flex flex-col bg-white dark:bg-gray-800/90 rounded-2xl p-6 sm:p-7 transition-all duration-500 cursor-pointer border border-gray-200/80 dark:border-gray-700/50 shadow-sm hover:shadow-2xl hover:shadow-sky-500/10 hover:-translate-y-1 hover:border-sky-300/50 dark:hover:border-sky-600/50 overflow-hidden h-full"
   >
     {/* Animated gradient background on hover */}
@@ -172,7 +170,6 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-7 max-w-7xl mx-auto">
               <FeatureCard
-                tourId="virtual-photoshoot"
                 icon={<VirtualPhotoshootIcon />}
                 title="Virtual Photoshoot"
                 subtitle="SEAMLESS SWAP"
@@ -180,7 +177,6 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
                 onClick={() => navigate(PATHS.VIRTUAL_PHOTOSHOOT)}
               />
                <FeatureCard
-                tourId="style-scene"
                 icon={<StyleSceneIcon />}
                 title="Style|Scene Campaigner"
                 subtitle="AI LIFESTYLE DIRECTOR"
@@ -188,7 +184,6 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
                 onClick={() => navigate(PATHS.STYLE_SCENE)}
               />
               <FeatureCard
-                tourId="asset-generator"
                 icon={<AssetGeneratorIcon />}
                 title="E-commerce Asset Gen"
                 subtitle="CORE EXTRACTION"
@@ -196,7 +191,6 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
                 onClick={() => navigate(PATHS.ASSET_GENERATOR)}
               />
               <FeatureCard
-                tourId="catalog-forged"
                 icon={<ProductForgeIcon />}
                 title="Perfect Product Forge"
                 subtitle="CATALOG | FORGED"
@@ -204,7 +198,6 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
                 onClick={() => navigate(PATHS.CATALOG_FORGED)}
               />
               <FeatureCard
-                tourId="pose-mimic"
                 icon={<PoseMimicIcon />}
                 title="AI Pose Mimic"
                 subtitle="POSE TRANSFER"
