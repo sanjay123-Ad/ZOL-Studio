@@ -148,3 +148,4 @@ curl -X POST https://zol-studio.vercel.app/api/credits/monthly-reset \
 **Everything is set up correctly!** Just commit the workflow file and test it! 🎉
 
 
+

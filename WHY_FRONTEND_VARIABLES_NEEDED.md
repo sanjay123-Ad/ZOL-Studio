@@ -154,3 +154,4 @@ VITE_LEMONSQUEEZY_BASIC_MONTHLY_VARIANT_ID=1124106
 **Without frontend variables, your payment buttons won't work!**
 
 
+

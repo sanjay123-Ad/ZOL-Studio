@@ -23,7 +23,6 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
 import { User, GeneratedAsset, CollectionAsset } from './types';
 import Layout from './components/Layout';
-import OnboardingTour from './components/OnboardingTour';
 import { supabase } from './services/supabase';
 import { getAssetsForUser, saveAsset, getAssetsFromCollection, saveAssetToCollection, deleteAsset, deleteAssetFromCollection } from './services/db';
 import Spinner from './components/Spinner';
@@ -32,7 +31,6 @@ import CookieConsentBanner from './components/CookieConsentBanner';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isTourActive, setIsTourActive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const hasHandledPasswordRecovery = useRef(false);
@@ -359,11 +357,6 @@ const App: React.FC = () => {
         navigate(targetPath, { replace: true });
       }
 
-      // Check if the onboarding tour should be shown.
-      const tourCompleted = localStorage.getItem('zola_ai_tour_completed');
-      if (!tourCompleted) {
-        setTimeout(() => setIsTourActive(true), 500);
-      }
     } else {
       // User is not logged in.
       setGalleryAssets([]);
@@ -422,11 +415,6 @@ const App: React.FC = () => {
     }
   };
   
-  const handleTourClose = () => {
-    localStorage.setItem('zola_ai_tour_completed', 'true');
-    setIsTourActive(false);
-  };
-  
   if (loading) {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
@@ -437,7 +425,6 @@ const App: React.FC = () => {
 
   return (
     <>
-      <OnboardingTour isVisible={isTourActive} onClose={handleTourClose} />
       <Routes>
         <Route path={PATHS.RESET_PASSWORD} element={<ResetPasswordPage />} />
         <Route path={PATHS.PRIVACY_POLICY} element={<PrivacyPolicyPage />} />

@@ -179,3 +179,4 @@ When you have users with annual plans:
 **Your ZOLA AI subscription and credit system is fully operational!** 🎉
 
 
+
