@@ -38,3 +38,4 @@ WHERE billing_period IS NOT NULL;
 -- 4. Must match the billing cycle from Lemon Squeezy subscription
 
 
+

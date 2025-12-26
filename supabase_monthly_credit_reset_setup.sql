@@ -49,3 +49,4 @@ WHERE (billing_period = 'annual' OR billing_period = 'monthly')
 -- 4. A scheduled job should check this column daily and reset credits when date arrives
 
 
+

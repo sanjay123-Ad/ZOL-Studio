@@ -162,3 +162,4 @@ VITE_LEMONSQUEEZY_AGENCY_ANNUAL_VARIANT_ID=your_agency_annual_id
 
 **Conclusion:** Add VITE_ variables to make ALL plans work properly! 🚀
 
+

@@ -237,3 +237,4 @@ const newTotalCredits = credits; // ✅ Just new plan credits
 This is the mindset you need. If you follow this, your SaaS will scale cleanly with no edge cases, no refund disasters, and no credit abuse.
 
 
+

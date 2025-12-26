@@ -340,3 +340,4 @@ The platform empowers fashion brands of all sizes to compete at the highest leve
 *Version: ZOLA 2.0*
 
 
+

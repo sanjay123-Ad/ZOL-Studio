@@ -189,3 +189,4 @@ The subscription and credit system now follows the **Cursor Model**:
 **No Supabase policy changes required** - existing setup is correct.
 
 
+
