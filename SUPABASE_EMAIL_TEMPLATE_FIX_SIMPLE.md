@@ -149,3 +149,4 @@ If none of the template variables work, check:
 **Status:** 🔧 **Update template to include `/reset-password` path!**
 
 
+

@@ -56,7 +56,7 @@ const AssetCollectionPage: React.FC<AssetCollectionPageProps> = ({ user, assets,
 
   const handleShare = async (asset: CollectionAsset) => {
     const fileName = `zola-ai-collection-${asset.id.substring(0, 8)}.png`;
-    const shareText = `Check out this asset from my ZOLA AI collection!`;
+    const shareText = `Check out this asset from my ZOL Studio AI collection!`;
     const file = await dataURLtoFile(asset.display_url, fileName);
 
     if (!file) {
@@ -67,7 +67,7 @@ const AssetCollectionPage: React.FC<AssetCollectionPageProps> = ({ user, assets,
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
-          title: 'ZOLA AI Asset',
+          title: 'ZOL Studio AI Asset',
           text: shareText,
           files: [file],
         });

@@ -8,8 +8,8 @@ const AboutPage: React.FC<AboutPageProps> = () => {
       <main className="w-full max-w-5xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 sm:p-10 lg:p-12 border border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold text-[#2E1E1E] dark:text-white font-headline">About ZOLA AI</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg">The Future of Fashion E-commerce, Powered by Generative AI.</p>
+            <h1 className="text-4xl sm:text-5xl font-bold text-[#2E1E1E] dark:text-white font-headline">About ZOL Studio AI</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg">AI-powered creative platform for fashion & design</p>
           </div>
 
           <div className="space-y-12">
@@ -32,7 +32,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
             </section>
             
             <section>
-              <h2 className="text-2xl sm:text-3xl font-bold text-sky-600 dark:text-sky-400 mb-4">How AI Powers ZOLA AI</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-sky-600 dark:text-sky-400 mb-4">How AI Powers ZOL Studio AI</h2>
               <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
                   Our entire platform is built on Google's state-of-the-art multimodal AI model, Gemini. Unlike older AI, Gemini doesn't just "see" your images; it understands them on a deeper level.
@@ -50,7 +50,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
                   <strong>Our Mission:</strong> To democratize high-end e-commerce photography for fashion brands of all sizes.
                 </p>
                 <p>
-                  We are ZOLA AI, a team of engineers and fashion industry veterans who believe that stunning product visuals shouldn't require expensive photoshoots and long turnaround times. By harnessing the power of generative AI, we provide tools that are fast, cost-effective, and produce results that rival traditional photography. We're passionate about empowering brands to tell their stories and sell their products more effectively in the digital marketplace.
+                  We are ZOL Studio AI, a team of engineers and fashion industry veterans who believe that stunning product visuals shouldn't require expensive photoshoots and long turnaround times. By harnessing the power of generative AI, we provide tools that are fast, cost-effective, and produce results that rival traditional photography. We're passionate about empowering brands to tell their stories and sell their products more effectively in the digital marketplace.
                 </p>
               </div>
             </section>
@@ -59,7 +59,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
       </main>
 
       <footer className="text-center mt-8 text-gray-400 dark:text-gray-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} ZOLA AI. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.</p>
       </footer>
     </div>
   );

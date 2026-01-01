@@ -2390,7 +2390,7 @@ const AssetGeneratorPage: React.FC<AssetGeneratorPageProps> = ({ user, onSaveToC
         )}
       </main>
       <footer className="text-center mt-8 text-gray-400 text-sm">
-        <p>&copy; {new Date().getFullYear()} ZOLA AI. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.</p>
       </footer>
     </div>
   );

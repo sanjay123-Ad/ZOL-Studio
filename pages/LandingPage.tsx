@@ -63,7 +63,7 @@ const Header: React.FC<{ onLogoClick?: () => void; onStart: () => void }> = ({ o
         >
           <button onClick={onLogoClick} className="flex items-center focus:outline-none group" aria-label="Go to homepage">
             <div className="w-14 h-14 bg-sky-500 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/20 group-hover:opacity-90 transition-opacity">
-              <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOLA AI" className="w-8 h-8 object-contain" />
+              <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-8 h-8 object-contain" />
             </div>
           </button>
           <div className="hidden md:flex items-center space-x-2 relative" ref={featuresRef}>
@@ -286,7 +286,7 @@ const FashionStudio: React.FC = () => (
   </section>
 );
 
-const WhyChooseZola: React.FC<{ onGuideClick: () => void }> = ({ onGuideClick }) => (
+const WhyChooseZOLStudio: React.FC<{ onGuideClick: () => void }> = ({ onGuideClick }) => (
   <section className="py-24 px-4 sm:px-6 lg:px-8">
     <div className="container mx-auto max-w-7xl">
       <div className="text-center mb-16">
@@ -300,7 +300,7 @@ const WhyChooseZola: React.FC<{ onGuideClick: () => void }> = ({ onGuideClick })
           },
           {
             title: 'Drastic Cost Reduction',
-            desc: 'Traditional photoshoots cost thousands per day. ZOLA reduces your visual production costs by up to 90%, allowing you to invest more in growth.',
+            desc: 'Traditional photoshoots cost thousands per day. ZOL Studio AI reduces your visual production costs by up to 90%, allowing you to invest more in growth.',
           },
           {
             title: 'Infinite Creative Scale',
@@ -316,7 +316,7 @@ const WhyChooseZola: React.FC<{ onGuideClick: () => void }> = ({ onGuideClick })
       <div className="text-center max-w-3xl mx-auto">
         <h3 className="font-heading text-3xl font-bold text-slate-900 mb-4">Fashion photography made easy</h3>
         <p className="text-lg text-slate-600 mb-8">
-          ZOLA AI lets you create professional studio-quality fashion assets to capture your audience&apos;s attention and stand out from the generic catalog content your competitors put out.
+          ZOL Studio AI lets you create professional studio-quality fashion assets to capture your audience&apos;s attention and stand out from the generic catalog content your competitors put out.
         </p>
         <button
           onClick={onGuideClick}
@@ -367,7 +367,7 @@ const traditionalPainPoints = [
   },
 ];
 
-const zolaWins = [
+const zolStudioWins = [
   {
     icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
     title: 'Zero-Prompt Swap',
@@ -385,7 +385,7 @@ const zolaWins = [
   {
     icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4',
     title: 'Instant Digital Press',
-    desc: 'Simply snap a photo with your phone. ZOLA removes wrinkles and standardizes lighting.',
+    desc: 'Simply snap a photo with your phone. ZOL Studio AI removes wrinkles and standardizes lighting.',
     badge: '95% Cost Savings',
     color: 'sky' as const,
   },
@@ -563,7 +563,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         <FashionStudio />
-        <WhyChooseZola onGuideClick={handleStart} />
+        <WhyChooseZOLStudio onGuideClick={handleStart} />
 
         {/* Testimonial */}
         <section className="relative w-full bg-sky-950 py-24 overflow-hidden border-y border-sky-900">
@@ -572,7 +572,7 @@ const LandingPage: React.FC = () => {
           <div className="container mx-auto px-4 relative z-10 text-center">
             <h4 className="text-sky-300 text-xs font-bold tracking-[0.3em] uppercase mb-10">Trusted by Modern E-Commerce Brands</h4>
             <blockquote className="font-serif text-3xl md:text-4xl lg:text-5xl text-white leading-relaxed max-w-5xl mx-auto mb-12 italic opacity-90">
-              &quot;ZOLA AI redefined our creative velocity. We transformed a single garment sample into a global, multi-channel campaign in 48 hours—zero studio time required.&quot;
+              &quot;ZOL Studio AI redefined our creative velocity. We transformed a single garment sample into a global, multi-channel campaign in 48 hours—zero studio time required.&quot;
             </blockquote>
             <div className="flex flex-col items-center">
               <div className="w-14 h-14 bg-sky-800 rounded-full mb-4 border-2 border-sky-700 shadow-lg overflow-hidden">
@@ -593,7 +593,7 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
             <div className="text-center mb-16">
-              <h2 className="font-heading text-4xl md:text-5xl font-bold text-slate-900 mb-4">Why Upgrade to ZOLA?</h2>
+              <h2 className="font-heading text-4xl md:text-5xl font-bold text-slate-900 mb-4">Why Upgrade to ZOL Studio AI?</h2>
               <p className="text-lg text-slate-700 font-medium">Stop wrestling with complex tools. Start creating.</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
@@ -633,10 +633,10 @@ const LandingPage: React.FC = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-bold text-sky-900 font-heading">The ZOLA AI Way</h3>
+                    <h3 className="text-2xl font-bold text-sky-900 font-heading">The ZOL Studio AI Way</h3>
                   </div>
                   <div className="space-y-10 relative z-10">
-                    {zolaWins.map((win) => {
+                    {zolStudioWins.map((win) => {
                       const colors = colorClassMap[win.color];
                       return (
                         <div key={win.title} className="flex items-start space-x-4">
@@ -669,7 +669,7 @@ const LandingPage: React.FC = () => {
                       </div>
                       <div className="h-8 w-[1px] bg-white/30 mx-4" />
                       <div className="flex flex-col text-right">
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-yellow-300">ZOLA Cost</span>
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-yellow-300">ZOL Studio AI Cost</span>
                         <span className="text-2xl font-extrabold">
                           $2 <span className="text-xs font-normal">/ SKU</span>
                         </span>
@@ -691,7 +691,7 @@ const LandingPage: React.FC = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-24">
               <div className="inline-block px-4 py-1 rounded-full bg-white/50 backdrop-blur-sm text-sky-700 text-xs font-bold tracking-widest uppercase mb-6 border border-sky-200 shadow-sm">
-                The Zola Engine
+                The ZOL Studio AI Engine
               </div>
               <h2 className="font-heading text-5xl md:text-6xl font-bold text-slate-900 mb-6">
                 4 Pillars of <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-600">Perfection</span>
@@ -990,7 +990,7 @@ const LandingPage: React.FC = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-600">Today</span>
             </h2>
             <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Join the thousands of designers and brands building the future of fashion with ZOLA. Experience the power of AI-driven studio photography today.
+              Join the thousands of designers and brands building the future of fashion with ZOL Studio AI. Experience the power of AI-driven studio photography today.
             </p>
             <div className="flex flex-col items-center space-y-4">
             <button
@@ -1037,12 +1037,12 @@ const LandingPage: React.FC = () => {
                 className="flex items-center mb-3 group w-fit"
               >
                 <div className="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
-                  <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOLA AI" className="w-6 h-6 object-contain" />
+                  <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-6 h-6 object-contain" />
                 </div>
-                <span className="text-lg font-bold text-slate-900">ZOLA AI</span>
+                <span className="text-lg font-bold text-slate-900">ZOL Studio AI</span>
               </button>
               <p className="text-slate-600 text-sm leading-relaxed max-w-xs mt-1">
-                AI-powered fashion e-commerce platform to create stunning visual assets with confidence.
+                AI-powered creative platform for fashion & design
               </p>
             </div>
 
@@ -1088,7 +1088,7 @@ const LandingPage: React.FC = () => {
           {/* Copyright */}
           <div className="pt-8 border-t border-slate-300/60">
             <p className="text-center text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} ZOLA AI. All rights reserved.
+              &copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.
             </p>
           </div>
         </div>

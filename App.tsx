@@ -28,6 +28,7 @@ import { getAssetsForUser, saveAsset, getAssetsFromCollection, saveAssetToCollec
 import Spinner from './components/Spinner';
 import { PATHS } from './constants/paths';
 import CookieConsentBanner from './components/CookieConsentBanner';
+import Analytics from './components/Analytics';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -492,6 +493,7 @@ const App: React.FC = () => {
         )}
       </Routes>
     <CookieConsentBanner />
+    <Analytics />
     </>
   );
 };

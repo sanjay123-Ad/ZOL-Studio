@@ -202,3 +202,4 @@ If Supabase doesn't support template functions like `replace`, you might need to
 **Status:** 🔧 **Try the template with path replacement first!**
 
 
+

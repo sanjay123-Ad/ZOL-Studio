@@ -53,7 +53,7 @@ const PrivacyPolicyPage: React.FC = () => {
             aria-label="Go to homepage"
           >
             <div className="w-14 h-14 bg-sky-500 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/20 group-hover:opacity-90 transition-opacity">
-              <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOLA AI" className="w-8 h-8 object-contain" />
+              <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-8 h-8 object-contain" />
             </div>
           </button>
           <div className="hidden md:flex items-center space-x-2">
@@ -127,10 +127,10 @@ const PrivacyPolicyPage: React.FC = () => {
             <section className="mb-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6">1. Introduction</h2>
               <p className="text-base text-slate-700 leading-relaxed mb-6 font-normal">
-                Welcome to ZOLA AI Fashion Studio ("we," "our," or "us"). We are committed to protecting your privacy and ensuring you have a positive experience on our website and in using our products and services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our AI-powered fashion e-commerce platform.
+                Welcome to ZOL Studio AI ("we," "our," or "us"). We are committed to protecting your privacy and ensuring you have a positive experience on our website and in using our products and services. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our AI-powered fashion e-commerce platform.
               </p>
               <p className="text-base text-slate-700 leading-relaxed font-normal">
-                By accessing or using ZOLA AI Fashion Studio, you agree to the collection and use of information in accordance with this Privacy Policy. If you do not agree with our policies and practices, please do not use our services.
+                By accessing or using ZOL Studio AI, you agree to the collection and use of information in accordance with this Privacy Policy. If you do not agree with our policies and practices, please do not use our services.
               </p>
             </section>
 
@@ -310,7 +310,7 @@ const PrivacyPolicyPage: React.FC = () => {
                 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
               </p>
               <div className="bg-slate-50 border-l-4 border-slate-300 p-6 rounded-r-lg">
-                <p className="text-base text-slate-900 font-semibold mb-3">ZOLA AI Fashion Studio</p>
+                <p className="text-base text-slate-900 font-semibold mb-3">ZOL Studio AI</p>
                 <p className="text-base text-slate-700">
                   Email: <a href="mailto:privacy@zolaai.com" className="text-sky-600 hover:text-sky-700 hover:underline font-medium">privacy@zolaai.com</a>
                 </p>
@@ -352,7 +352,7 @@ const PrivacyPolicyPage: React.FC = () => {
             <section className="mb-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 mt-10">13. Commercial License and Generated Content</h2>
               <p className="text-base text-slate-700 leading-relaxed mb-6 font-normal">
-                All content generated using ZOLA AI Fashion Studio is provided with a commercial license, allowing you to use generated assets for commercial purposes. However:
+                All content generated using ZOL Studio AI is provided with a commercial license, allowing you to use generated assets for commercial purposes. However:
               </p>
               <ul className="list-disc pl-6 space-y-3 text-base text-slate-700 leading-relaxed">
                 <li>You retain ownership of your uploaded source images</li>
@@ -379,12 +379,12 @@ const PrivacyPolicyPage: React.FC = () => {
                 className="flex items-center mb-3 group w-fit"
               >
                 <div className="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
-                  <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOLA AI" className="w-6 h-6 object-contain" />
+                  <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-6 h-6 object-contain" />
                 </div>
-                <span className="text-lg font-bold text-slate-900">ZOLA AI</span>
+                <span className="text-lg font-bold text-slate-900">ZOL Studio AI</span>
               </button>
               <p className="text-slate-600 text-sm leading-relaxed max-w-xs mt-1">
-                AI-powered fashion e-commerce platform to create stunning visual assets with confidence.
+                AI-powered creative platform for fashion & design
               </p>
             </div>
 
@@ -392,7 +392,10 @@ const PrivacyPolicyPage: React.FC = () => {
             <div className="flex flex-row gap-12 md:gap-16">
               {/* Column 1 */}
               <div className="flex flex-col space-y-2.5">
-                <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
+                <button 
+                  onClick={() => navigate(PATHS.PRICING)}
+                  className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
+                >
                   Pricing
                 </button>
                 <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
@@ -402,10 +405,16 @@ const PrivacyPolicyPage: React.FC = () => {
 
               {/* Column 2 */}
               <div className="flex flex-col space-y-2.5">
-                <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
+                <button 
+                  onClick={() => navigate(PATHS.PRIVACY_POLICY)}
+                  className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
+                >
                   Privacy Policy
                 </button>
-                <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
+                <button 
+                  onClick={() => navigate(PATHS.TERMS_AND_CONDITIONS)}
+                  className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
+                >
                   Terms of Service
                 </button>
               </div>
@@ -415,7 +424,7 @@ const PrivacyPolicyPage: React.FC = () => {
           {/* Copyright */}
           <div className="pt-8 border-t border-slate-300/60">
             <p className="text-center text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} ZOLA AI. All rights reserved.
+              &copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.
             </p>
           </div>
         </div>

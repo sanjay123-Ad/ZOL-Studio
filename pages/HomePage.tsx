@@ -208,12 +208,12 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
           </main>
           
           <footer className="text-center mt-16 text-gray-400 text-sm">
-            <p>&copy; {new Date().getFullYear()} Zola AI Fashion Studio. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.</p>
             <button 
               onClick={() => navigate(PATHS.ABOUT)}
               className="mt-2 text-gray-500 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 font-semibold transition-colors"
             >
-              About Zola AI Fashion Studio
+              About ZOL Studio AI
             </button>
           </footer>
         </div>

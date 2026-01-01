@@ -946,7 +946,7 @@ const CatalogForgedPage: React.FC<CatalogForgedPageProps> = ({ user }) => {
           </div>
         )}
       </main>
-      <footer className="text-center py-12 text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-[0.2em]"><p>&copy; {new Date().getFullYear()} ZOLA AI Fashion Studio. Powered by Gemini 3 Pro.</p></footer>
+      <footer className="text-center py-12 text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-[0.2em]"><p>&copy; {new Date().getFullYear()} ZOL Studio AI. Powered by Gemini 3 Pro.</p></footer>
 
       {/* Fullscreen Image Modal */}
       {fullscreenImage && (

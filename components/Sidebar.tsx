@@ -182,12 +182,12 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isCollapsed, closeMob
             >
                 <div className="w-11 h-11 bg-sky-500 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/20 relative overflow-hidden group flex-shrink-0">
                     <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-sky-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="Zola AI Fashion Studio" className="relative z-10 h-6 w-6 object-contain" />
+                    <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="relative z-10 h-6 w-6 object-contain" />
                 </div>
                 {!isCollapsed && (
                     <div className="flex flex-col">
-                        <span className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-none">ZOLA AI</span>
-                        <span className="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 tracking-[0.25em] uppercase mt-1">Fashion Studio</span>
+                        <span className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-none">ZOL Studio AI</span>
+                        <span className="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 tracking-[0.25em] uppercase mt-1">Creative Platform</span>
                     </div>
                 )}
             </Link>

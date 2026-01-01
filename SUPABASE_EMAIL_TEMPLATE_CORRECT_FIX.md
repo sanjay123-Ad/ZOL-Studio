@@ -177,3 +177,4 @@ For reference, here are the available variables:
 **Status:** ✅ **Use `{{ .ConfirmationURL }}` - This is the correct solution!**
 
 
+
