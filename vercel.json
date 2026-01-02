@@ -3,6 +3,10 @@
   "outputDirectory": "dist/client",
   "rewrites": [
     {
+      "source": "/(google.*\\.html|sitemap\\.xml|robots\\.txt)",
+      "destination": "/$1"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
