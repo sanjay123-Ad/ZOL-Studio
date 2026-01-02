@@ -1,5 +1,6 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { ImageFile } from '../types';
+import { logUsage } from './usageTrackingService';
 
 /**
  * Helper to handle Gemini errors consistently
@@ -53,7 +54,10 @@ export async function generatePoseMimic(
         
         if (response.candidates && response.candidates[0].content.parts) {
             for (const part of response.candidates[0].content.parts) {
-                if (part.inlineData) return part.inlineData.data;
+                if (part.inlineData) {
+                    const result = part.inlineData.data;
+                    return result;
+                }
             }
         }
         throw new Error("No image returned by the Pro model.");

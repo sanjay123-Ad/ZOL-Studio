@@ -295,12 +295,6 @@ ${garmentType === 'lower' ? `- **RECREATION PROCESS:** You must RECREATE IMAGE 1
             for (const part of response.candidates[0].content.parts) {
                 if (part.inlineData) {
                     const result = part.inlineData.data;
-                    // Log usage after successful generation (Gemini 3 Pro batch)
-                    if (userId) {
-                        const promptLength = prompt.length;
-                        // Gemini 3 Pro pricing: higher cost per image
-                        await logUsage(userId, 'Product Quality Forge', 2, promptLength, 1, true);
-                    }
                     return result;
                 }
             }

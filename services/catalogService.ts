@@ -52,7 +52,7 @@ export async function generateForgedAsset(
         if (!garmentImage) {
             throw new Error('Garment image must be provided.');
         }
-        const model = 'gemini-2.5-flash-image';
+        const model = 'gemini-3-pro-image-preview';
         const prompt = `# ULTRA-FINAL, TECHNICAL MANDATE: Catalog|Forged (Product Asset Perfection)
 ## Ultimate Goal
 To deliver a technically flawless, hyper-sharp, 4K product asset that embodies 100% "BRAND NEW" condition, free from ANY imperfections, strictly adhering to the highest e-commerce marketplace standards for pristine garment presentation.
@@ -111,11 +111,6 @@ Return ONLY the final, forged image. Do not include any text, logos, or watermar
             for (const part of response.candidates[0].content.parts) {
                 if (part.inlineData) {
                     const result = part.inlineData.data;
-                    // Log usage after successful generation
-                    if (userId) {
-                        const promptLength = prompt.length;
-                        await logUsage(userId, 'Catalog Forged', 1, promptLength, 1);
-                    }
                     return result;
                 }
             }
@@ -134,7 +129,7 @@ export async function generateMannequinModel(
         if (!perfectedGarmentImage) {
             throw new Error('Perfected garment image must be provided.');
         }
-        const model = 'gemini-2.5-flash-image';
+        const model = 'gemini-3-pro-image-preview';
         const prompt = `# INSTRUCTION: AI Ghost Mannequin Conversion
 
 ## PRIMARY DIRECTIVE
@@ -179,11 +174,6 @@ Return ONLY the final, edited image. Do not include any text, logos, or watermar
             for (const part of response.candidates[0].content.parts) {
                 if (part.inlineData) {
                     const result = part.inlineData.data;
-                    // Log usage after successful generation
-                    if (userId) {
-                        const promptLength = prompt.length;
-                        await logUsage(userId, 'Catalog Forged', 1, promptLength, 1);
-                    }
                     return result;
                 }
             }
@@ -206,7 +196,7 @@ export async function generatePerfectedMannequin(
         if (!garmentImage) throw new Error('Garment image must be provided.');
         if (!gender || !garmentType) throw new Error('Gender and garment type must be provided.');
 
-        const model = 'gemini-2.5-flash-image';
+        const model = 'gemini-3-pro-image-preview';
 
         // 1. Select and fetch the correct mannequin model image
         let mannequinUrl = '';
@@ -284,7 +274,7 @@ To perform a flawless, hyper-realistic virtual try-on, dressing the provided man
                     // Log usage after successful generation
                     if (userId) {
                         const promptLength = prompt.length;
-                        await logUsage(userId, 'Catalog Forged', 2, promptLength, 1);
+                        await logUsage(userId, 'Catalog Forged', 2, promptLength, 1, true);
                     }
                     return result;
                 }

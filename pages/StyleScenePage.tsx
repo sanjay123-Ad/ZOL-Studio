@@ -86,7 +86,6 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
   // View & Modal control state
   const [currentView, setCurrentView] = useState<'setup' | 'generate'>('setup');
   const [generationTarget, setGenerationTarget] = useState<{ pose: PoseForDisplay; garmentView: 'front' | 'back' } | null>(null);
-  const [poseToGenerate, setPoseToGenerate] = useState<PoseForDisplay | null>(null); // For the front/back selection modal
   const [fixingImageInfo, setFixingImageInfo] = useState<GeneratedImageResult | null>(null);
   const [viewingCollection, setViewingCollection] = useState<{ poseName: string; images: CollectionItem[] } | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -424,14 +423,11 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
             throw new Error(creditResult.error || 'Failed to deduct credits');
         }
 
-        const modelImageFile = await urlToImageFile(selectedModel.closeUpUrl);
         const poseReferenceImageFile = await urlToImageFile(pose.imageUrl);
       
         const resultBase64 = await generatePoseSwapImage(
             garmentImage,
-            modelImageFile,
             poseReferenceImageFile,
-            pose.command, // Pass the specific pose command
             undefined, // fixInstruction
             user.id
         );
@@ -482,16 +478,11 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
         const pose = selectedModel.poses.find(p => p.id === poseId);
         if (!pose) throw new Error("Pose for regeneration not found.");
       
-        const [modelImageFile, poseReferenceImageFile] = await Promise.all([
-            urlToImageFile(selectedModel.closeUpUrl),
-            urlToImageFile(pose.imageUrl),
-        ]);
+        const poseReferenceImageFile = await urlToImageFile(pose.imageUrl);
         
         const resultBase64 = await generatePoseSwapImage(
             garmentImage,
-            modelImageFile,
             poseReferenceImageFile,
-            pose.command, // Pass the original command
             fixInstruction,
             user.id
         );
@@ -700,7 +691,7 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
                                     </div>
                                     <p className="text-xs font-semibold text-gray-700 block truncate text-center mt-2 h-7 flex items-center justify-center" title={pose.name}>{pose.name}</p>
                                     <button
-                                        onClick={() => state.status !== 'success' && setPoseToGenerate(pose)}
+                                        onClick={() => state.status !== 'success' && handleStartGeneration(pose, pose.defaultView)}
                                         disabled={isDisabled}
                                         className={`mt-1 w-full text-xs font-semibold py-1.5 rounded-full transition-colors flex items-center justify-center h-7 ${
                                             state.status === 'success' ? 'bg-green-100 text-green-800 cursor-default' : 
@@ -708,7 +699,7 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
                                             'bg-sky-600 text-white hover:bg-sky-700 disabled:bg-gray-400 disabled:cursor-not-allowed'
                                         }`}
                                     >
-                                        {buttonText}
+                                        {buttonText === 'Start' ? 'Generate' : buttonText}
                                     </button>
                                 </div>
                             );
@@ -854,32 +845,6 @@ const StyleScenePage: React.FC<StyleScenePageProps> = ({ user }) => {
               setFullscreenImage(null);
             }}
           />
-        </div>
-      )}
-
-      {poseToGenerate && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={() => setPoseToGenerate(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-2xl font-bold text-gray-800 font-headline">Select Garment View</h2>
-            <p className="mt-2 text-gray-600">Which side of the garment should be visible in this pose?</p>
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => handleStartGeneration(poseToGenerate, 'front')}
-                disabled={!garmentFrontImage}
-                className="w-full px-6 py-3 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Use Front View
-              </button>
-              <button
-                onClick={() => handleStartGeneration(poseToGenerate, 'back')}
-                disabled={!garmentBackImage}
-                className="w-full px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg shadow-md hover:bg-black transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                Use Back View
-              </button>
-            </div>
-            <button onClick={() => setPoseToGenerate(null)} className="mt-4 text-sm text-gray-500 hover:text-gray-800">Cancel</button>
-          </div>
         </div>
       )}
 

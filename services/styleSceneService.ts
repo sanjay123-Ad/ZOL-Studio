@@ -23,58 +23,47 @@ const handleGeminiError = (error: any, context: string): never => {
 
 export async function generatePoseSwapImage(
     garmentImage: ImageFile,
-    modelImage: ImageFile,
     poseImage: ImageFile,
-    poseCommand: string,
     fixInstruction?: string,
     userId?: string
 ): Promise<string> {
     try {
-        if (!garmentImage || !modelImage || !poseImage) {
-            throw new Error('All source images (garment, model, pose) must be provided.');
+        if (!garmentImage || !poseImage) {
+            throw new Error('Both garment and pose images must be provided.');
         }
         
-        const model = 'gemini-2.5-flash-image';
+        const model = 'gemini-3-pro-image-preview';
         
-        const prompt = `# ROLE: AI Photoshoot Director
+        const prompt = `# INSTRUCTION: AI-DRIVEN HIGH-FIDELITY GARMENT REDRESSING (ZERO TOLERANCE PROTOCOL)
 
 ## GOAL
-Create a single, photorealistic, 4K image for a fashion campaign.
+Perform a professional "Digital Redressing" on the person in the "Base Image".
 
 ## CORE COMPONENTS (Inputs)
-- **Image 1 (Garment):** The clothing to be worn.
-- **Image 2 (Model Identity):** The face, hair, and ethnicity for the person.
-- **Image 3 (Pose Reference):** The body pose to replicate.
-- **Text Command (Pose Command):** Specific instructions for the pose's style and attitude.
+- **Image 1 (New Garment):** The clothing to be transferred.
+- **Image 2 (Base Image):** The target person and environment.
 
-## CRITICAL EXECUTION INSTRUCTIONS
+## CRITICAL REDRESSING PROTOCOL (ULTIMATE RULE E.4)
+1. **COMPLETE CLOTHING REMOVAL (MANDATORY):** You MUST first identify and digitally REMOVE every piece of clothing currently worn by the person in Image 2. NO traces, shadows, or textures of the original outfit (collars, hems, layers) should be visible.
+2. **CLEAN REPLACEMENT:** Replace the removed clothing entirely with the "New Garment" from Image 1. 
+3. **3D TOPOLOGY MAPPING:** Perform a 3D parametric reconstruction of the garment in Image 1. Wrap it realistically around the body contours of the person in Image 2.
+4. **NO GHOSTING/MERGING:** Ensure there is ZERO blending between the original clothes in Image 2 and the new garment from Image 1. The original clothes must be 100% replaced.
+5. **ZERO ALTERATION OF BASE:** You MUST NOT change the person's pose, body shape, face, hair, or the background of Image 2. Only the clothes change.
 
-1.  **SYNTHESIZE, DO NOT REPLACE:** You MUST synthesize a new image by combining all components.
-    -   **Pose:** The final model's body pose MUST be an EXACT replica of the pose in the "Pose Reference" image.
-    -   **Identity:** The final model's face, hair, and ethnicity MUST be an EXACT match to the "Model Identity" image.
-    -   **Garment:** The final model MUST be wearing the EXACT garment from the "Garment" image. Preserve its color, pattern, style, and texture. Ensure a realistic 3D drape on the new pose.
-
-2.  **ADHERE TO THE POSE COMMAND:** The mood and details of the final image must follow this specific instruction:
-    **Pose Command:** "${poseCommand}"
-
-${fixInstruction ? `
-3.  **APPLY THIS CORRECTION:** A previous generation had an error. You MUST apply this fix: "${fixInstruction}"
-` : ''}
-
-4.  **AESTHETICS:**
-    -   **Background:** Place the final model on a neutral, seamless grey studio background.
-    -   **Quality:** The output must be indistinguishable from a real, high-end professional photograph.
+## QUALITY STANDARDS
+- Preserve 100% of the color, pattern, and texture of Image 1.
+- Lighting and shadows on the new garment MUST match the original scene in Image 2.
+- 4K resolution, ultra-photorealistic output.
 
 ## OUTPUT FORMAT
-Return ONLY the final, generated image. No text, watermarks, or other artifacts.`;
+Return ONLY the final redressed image. No text, logos, or watermarks.`;
         
         const garmentImagePart = { inlineData: { data: garmentImage.base64, mimeType: garmentImage.mimeType } };
-        const modelImagePart = { inlineData: { data: modelImage.base64, mimeType: modelImage.mimeType } };
         const poseImagePart = { inlineData: { data: poseImage.base64, mimeType: poseImage.mimeType } };
         
         const response = await ai.models.generateContent({
             model,
-            contents: { parts: [garmentImagePart, modelImagePart, poseImagePart, { text: prompt }] },
+            contents: { parts: [garmentImagePart, poseImagePart, { text: prompt }] },
             config: {
                 responseModalities: [Modality.IMAGE],
             },
@@ -88,7 +77,7 @@ Return ONLY the final, generated image. No text, watermarks, or other artifacts.
                 const promptLength = prompt.length;
                 // Use different feature name for fix/regenerate operations
                 const featureName = fixInstruction ? 'Pose Swap Fix' : 'Pose Swap';
-                await logUsage(userId, featureName, 3, promptLength, 1);
+                await logUsage(userId, featureName, 2, promptLength, 1, true);
             }
             return result;
           }
@@ -113,25 +102,32 @@ export async function changeBackgroundImage(
 
         const model = 'gemini-2.5-flash-image';
 
-        const prompt = `# TASK: AI Background Replacement
+        const prompt = `# TASK: AI BACKGROUND RECOLORING & STYLE TRANSFER (STRICT SUBJECT & SCENE LOCK)
 
 ## GOAL
-Combine the person from the "Subject Image" with the scene from the "Background Image" to create a single, seamless, and photorealistic image.
+Take the generated image (Image 1) and change its background color to match the color palette of Image 2. You are NOT replacing the scene; you are RECOLORING it.
 
-## IMAGE ROLES (In order of appearance)
-- **Image 1 (Subject Image):** Contains the person to be extracted.
-- **Image 2 (Background Image):** The new background.
+## CORE INPUTS
+- **Image 1 (Source Scene):** The original generated image containing the model, their pose, their outfit, and the initial background/surroundings.
+- **Image 2 (Color Reference):** The target background whose color palette should be extracted.
 
-## INSTRUCTIONS
-1.  **Extract the Subject:** Perfectly cut out the person from the "Subject Image".
-2.  **Combine Images:** Place the person into the "Background Image".
-3.  **Integrate Realistically:**
-    - Match the lighting, shadows, and color of the person to the new background.
-    - Ensure the final image looks like a real photograph.
+## CRITICAL EXECUTION PROTOCOL (STRICT LOCK)
+1. **PROTECT THE SUBJECT & SCENE STRUCTURE:** You MUST NOT change the person or the structural elements of the background in Image 1.
+   - **Person Lock:** Keep the person's face, hair, skin tone, and outfit exactly as they appear in Image 1.
+   - **Structure Lock:** Maintain any furniture (chairs, stools), floors, or walls present in Image 1.
+2. **BACKGROUND RECOLORING (MANDATORY):** Extract the dominant color and tonal mood from Image 2 and apply it to the background of Image 1.
+   - Example: If Image 1 has a white studio background and Image 2 is blue, the background in Image 1 should become the EXACT shade of blue from Image 2.
+   - The original lighting and shadows from Image 1 MUST be preserved but rendered in the new color.
+3. **NO BACKGROUND REPLACEMENT:** DO NOT replace the background of Image 1 with the contents of Image 2. Use Image 2 ONLY for its color information.
+4. **SEAMLESS INTEGRATION:** Ensure the transition between the person and the newly colored background is perfect, with zero color bleeding or artifacts.
 
-## OUTPUT
-- The aspect ratio must match the "Background Image".
-- Return ONLY the final composite image. No text or watermarks.`;
+## QUALITY STANDARDS
+- The person and background objects remain identical to Image 1 in terms of shape and position.
+- The background color matches the palette of Image 2.
+- 4K resolution, photorealistic finish.
+
+## OUTPUT FORMAT
+Return ONLY the final recolored image. No text, logos, or watermarks.`;
 
         const subjectImagePart = { inlineData: { data: subjectImage.base64, mimeType: subjectImage.mimeType } };
         const backgroundImagePart = { inlineData: { data: backgroundImage.base64, mimeType: backgroundImage.mimeType } };
@@ -150,7 +146,7 @@ Combine the person from the "Subject Image" with the scene from the "Background 
                 // Log usage after successful generation
                 if (userId) {
                     const promptLength = prompt.length;
-                    await logUsage(userId, 'Change Background', 2, promptLength, 1);
+                    await logUsage(userId, 'Change Background', 2, promptLength, 1, false);
                 }
                 return result;
             }
