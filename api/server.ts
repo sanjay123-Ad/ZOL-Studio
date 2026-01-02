@@ -7,7 +7,7 @@ import { render } from '../dist/server/entry-server.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // List of static file extensions that should be served directly
-const STATIC_EXTENSIONS = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.map', '.webp', '.avif'];
+const STATIC_EXTENSIONS = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.map', '.webp', '.avif', '.html', '.xml', '.txt'];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
