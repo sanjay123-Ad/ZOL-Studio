@@ -41,7 +41,7 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ user, assets, isLoading, erro
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `zola-ai-gallery-${asset.id.substring(0, 8)}.png`;
+        link.download = `zol-studio-ai-gallery-${asset.id.substring(0, 8)}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -55,8 +55,8 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ user, assets, isLoading, erro
   };
 
   const handleShare = async (asset: GeneratedAsset) => {
-    const fileName = `zola-ai-gallery-${asset.id.substring(0, 8)}.png`;
-    const shareText = `Check out this asset from ZOLA AI!`;
+    const fileName = `zol-studio-ai-gallery-${asset.id.substring(0, 8)}.png`;
+    const shareText = `Check out this asset from ZOL Studio AI!`;
     const file = await dataURLtoFile(asset.display_url, fileName);
 
     if (!file) {
@@ -67,7 +67,7 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ user, assets, isLoading, erro
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
-          title: 'ZOLA AI Asset',
+          title: 'ZOL Studio AI Asset',
           text: shareText,
           files: [file],
         });

@@ -1,7 +1,6 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { ImageFile } from '../types';
 import { MANNEQUIN_MODELS } from './mannequins';
-import { logUsage } from './usageTrackingService';
 
 if (!process.env.API_KEY) {
   throw new Error("API_KEY environment variable not set");
@@ -271,11 +270,6 @@ To perform a flawless, hyper-realistic virtual try-on, dressing the provided man
             for (const part of response.candidates[0].content.parts) {
                 if (part.inlineData) {
                     const result = part.inlineData.data;
-                    // Log usage after successful generation
-                    if (userId) {
-                        const promptLength = prompt.length;
-                        await logUsage(userId, 'Catalog Forged', 2, promptLength, 1, true);
-                    }
                     return result;
                 }
             }

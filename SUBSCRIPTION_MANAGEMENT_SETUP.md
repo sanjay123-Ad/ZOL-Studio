@@ -247,3 +247,4 @@ Lemon Squeezy can send email notifications for:
 **You're all set! Your customers can now manage their subscriptions! 🎉**
 
 
+

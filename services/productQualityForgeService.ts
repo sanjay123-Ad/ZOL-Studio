@@ -1,6 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { ImageFile } from '../types';
-import { logUsage } from './usageTrackingService';
 
 /**
  * Helper to handle Gemini errors consistently

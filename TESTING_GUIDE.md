@@ -54,7 +54,7 @@ Forwarding: https://xxxx-xxxx-xxxx.ngrok-free.dev -> http://localhost:5173
 **Expected Results:**
 - ✅ Button shows "Redirecting..." briefly
 - ✅ Browser redirects to Lemon Squeezy checkout page
-- ✅ Checkout page shows "Zola Basic" product
+- ✅ Checkout page shows "ZOL Studio AI Basic" product
 - ✅ Price shows $19.00/month
 - ✅ Test mode banner is visible (orange banner at top)
 

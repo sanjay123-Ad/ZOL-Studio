@@ -578,7 +578,7 @@ const AuthPage: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-sky-900/60 via-transparent to-blue-900" />
           </div>
           <div className="relative flex items-center gap-3 mb-6">
-            <span className="font-bold text-2xl tracking-tight">ZOLA AI</span>
+            <span className="font-bold text-2xl tracking-tight">ZOL Studio AI</span>
           </div>
           <div className="relative flex-1 flex flex-col justify-between">
             <style>{`
@@ -685,13 +685,13 @@ const AuthPage: React.FC = () => {
                 <div className="w-20 h-20 bg-sky-500 rounded-2xl flex items-center justify-center mb-4 shadow-xl shadow-sky-500/20">
                   <img 
                     src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" 
-                    alt="Zola AI Logo" 
+                    alt="ZOL Studio AI Logo" 
                     className="w-12 h-12 object-contain"
                   />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">Welcome to ZOLA AI</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">Welcome to ZOL Studio AI</h1>
                 {view === 'login' ? (
-                  <p className="text-gray-500 mb-6 text-sm text-center">Use your email or another service to continue with ZOLA AI for FREE</p>
+                  <p className="text-gray-500 mb-6 text-sm text-center">Use your email or another service to continue with ZOL Studio AI for FREE</p>
                 ) : (
                   <p className="text-gray-500 mb-6 text-sm text-center">Get started with 10 free generations.</p>
                 )}

@@ -13,9 +13,18 @@ import { useEffect } from 'react';
 declare global {
   interface Window {
     dataLayer: any[];
-    gtag: (...args: any[]) => void;
+    gtag: (command: string, ...args: any[]) => void;
   }
 }
+
+/**
+ * Utility to track custom events
+ */
+export const trackEvent = (eventName: string, params?: Record<string, any>) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', eventName, params);
+  }
+};
 
 const Analytics: React.FC = () => {
   useEffect(() => {

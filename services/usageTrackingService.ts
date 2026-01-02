@@ -32,7 +32,7 @@ export function estimateTokens(inputImages: number, inputChars: number, outputIm
     return imageTokens + textTokens;
 }
 
-export function calculateCost(tokens: number, outputImages: number, outputTokens: number = 0, useGemini3Pro: boolean = false): number {
+export function calculateCost(tokens: number, outputImages: number, outputTokens: number = 0, useGemini3Pro: boolean = false, isBatch: boolean = false): number {
     // Select pricing based on model
     const inputCostPerMillion = useGemini3Pro ? GEMINI_3_PRO_INPUT_COST_PER_MILLION : INPUT_COST_PER_MILLION;
     const imageCostPerImage = useGemini3Pro ? GEMINI_3_PRO_IMAGE_COST : IMAGE_GENERATION_COST;
@@ -46,7 +46,10 @@ export function calculateCost(tokens: number, outputImages: number, outputTokens
     // Calculate output image cost
     const imageCost = outputImages * imageCostPerImage;
     
-    return inputCost + outputTokenCost + imageCost;
+    const totalCost = inputCost + outputTokenCost + imageCost;
+
+    // Apply 50% discount for batch processing
+    return isBatch ? totalCost * 0.5 : totalCost;
 }
 
 // Estimate output tokens for text-based features (JSON responses, analysis, etc.)
@@ -81,7 +84,7 @@ export async function logUsage(
     try {
         const tokens = estimateTokens(inputImages, inputChars, outputImages);
         const outputTokens = estimateOutputTokens(feature, inputChars);
-        const estimatedCost = calculateCost(tokens, outputImages, outputTokens, useGemini3Pro);
+        const estimatedCost = calculateCost(tokens, outputImages, outputTokens, useGemini3Pro, false);
 
         const { error } = await supabase
             .from('usage_logs')
@@ -120,7 +123,7 @@ export async function logBatchUsage(
     try {
         const tokens = estimateTokens(totalInputImages, totalInputChars, totalOutputImages);
         const outputTokens = estimateOutputTokens(feature, totalInputChars);
-        const estimatedCost = calculateCost(tokens, totalOutputImages, outputTokens, useGemini3Pro);
+        const estimatedCost = calculateCost(tokens, totalOutputImages, outputTokens, useGemini3Pro, true);
 
         const { error } = await supabase
             .from('usage_logs')

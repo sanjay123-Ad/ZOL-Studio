@@ -1,6 +1,6 @@
 import { ImageFile } from '../types';
 
-const DB_NAME = 'ZOLA_AI_ImageStore';
+const DB_NAME = 'ZOL_STUDIO_AI_ImageStore';
 const DB_VERSION = 1;
 const STORE_NAME = 'image_files';
 

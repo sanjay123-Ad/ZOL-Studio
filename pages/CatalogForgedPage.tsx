@@ -538,7 +538,7 @@ const CatalogForgedPage: React.FC<CatalogForgedPageProps> = ({ user }) => {
           try {
             const sourceImageFile = await fileToImageFile(f.file);
             totalInputImages += 2; // source + reference
-            totalInputChars += 1000; // approximate prompt length
+            totalInputChars += 2500; // actual prompt length is approx 2500 chars
             
             const resultBase64 = await generateProductQualityForge(sourceImageFile, referenceImage, garmentType, user.id);
             

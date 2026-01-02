@@ -440,7 +440,7 @@ const TryOnPage: React.FC<TryOnPageProps> = ({ user, onSave }) => {
     if (!generatedImage) return;
     const link = document.createElement('a');
     link.href = generatedImage;
-    link.download = `zola-ai-photoshoot-${new Date().getTime()}.png`;
+    link.download = `zol-studio-ai-photoshoot-${new Date().getTime()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -449,8 +449,8 @@ const TryOnPage: React.FC<TryOnPageProps> = ({ user, onSave }) => {
   const handleShare = async () => {
     if (!generatedImage) return;
     setError(null);
-    const fileName = `zola-ai-photoshoot-${new Date().getTime()}.png`;
-    const shareText = `Check out my new look from ZOLA AI!`;
+    const fileName = `zol-studio-ai-photoshoot-${new Date().getTime()}.png`;
+    const shareText = `Check out my new look from ZOL Studio AI!`;
     const file = await dataURLtoFile(generatedImage, fileName);
 
     if (!file) {
@@ -461,7 +461,7 @@ const TryOnPage: React.FC<TryOnPageProps> = ({ user, onSave }) => {
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
-          title: 'My ZOLA AI Virtual Photoshoot',
+          title: 'My ZOL Studio AI Virtual Photoshoot',
           text: shareText,
           files: [file],
         });
@@ -772,7 +772,7 @@ const TryOnPage: React.FC<TryOnPageProps> = ({ user, onSave }) => {
       </main>
 
       <footer className="text-center mt-8 text-gray-400 dark:text-gray-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} ZOLA AI. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} ZOL Studio AI. All rights reserved.</p>
       </footer>
 
       {/* Fullscreen Image Modal */}
