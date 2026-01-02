@@ -3,15 +3,11 @@
   "outputDirectory": "dist/client",
   "rewrites": [
     {
-      "source": "/(google.*\\.html|sitemap\\.xml|robots\\.txt)",
-      "destination": "/$1"
-    },
-    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|google.*\\.html|sitemap\\.xml|robots\\.txt|.*\\.js|.*\\.css|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif|.*\\.svg|.*\\.ico|.*\\.woff|.*\\.woff2|.*\\.ttf|.*\\.eot|.*\\.json|.*\\.map|.*\\.webp|.*\\.avif).*)$",
       "destination": "/api/server"
     }
   ]
