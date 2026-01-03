@@ -263,6 +263,23 @@ const App: React.FC = () => {
     }
   };
 
+  // Effect 0: Set favicon dynamically
+  useEffect(() => {
+    const setFavicon = () => {
+      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) {
+        link.href = 'https://i.postimg.cc/htdLfcPh/logo.png';
+      } else {
+        const newLink = document.createElement('link');
+        newLink.rel = 'icon';
+        newLink.type = 'image/png';
+        newLink.href = 'https://i.postimg.cc/htdLfcPh/logo.png';
+        document.getElementsByTagName('head')[0].appendChild(newLink);
+      }
+    };
+    setFavicon();
+  }, []);
+
   // Effect 1: Handle Auth State Changes. This is now more robust.
   useEffect(() => {
     // This function processes a session and updates user state. It's used for both initial load and subsequent changes.
