@@ -75,7 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout }) => {
         {/* Mobile Header */}
         <header className="lg:hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="h-8 object-contain" />
+            <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-10 w-10 object-contain" />
             <div className="flex flex-col">
               <span className="text-[#2E1E1E] dark:text-white text-lg font-bold font-headline">ZOL Studio AI</span>
               <span className="text-gray-600 dark:text-gray-400 text-xs font-medium">Creative Platform</span>

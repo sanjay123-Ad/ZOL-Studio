@@ -180,10 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isCollapsed, closeMob
               onClick={closeMobileSidebar}
               className={`mb-8 px-2 h-auto flex items-start cursor-pointer gap-3 hover:opacity-80 transition-opacity ${isCollapsed ? 'justify-center' : ''}`} 
             >
-                <div className="w-11 h-11 bg-sky-500 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/20 relative overflow-hidden group flex-shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-sky-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="relative z-10 h-6 w-6 object-contain" />
-                </div>
+                <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-10 w-10 md:h-12 md:w-12 object-contain flex-shrink-0" />
                 {!isCollapsed && (
                     <div className="flex flex-col">
                         <span className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-none">ZOL Studio AI</span>

@@ -682,13 +682,11 @@ const AuthPage: React.FC = () => {
           <div className={`relative max-w-md mx-auto w-full ${!['login', 'register'].includes(view) ? 'flex flex-col justify-center' : ''}`}>
             {['login', 'register'].includes(view) && (
               <div className="flex flex-col items-center mb-8">
-                <div className="w-20 h-20 bg-sky-500 rounded-2xl flex items-center justify-center mb-4 shadow-xl shadow-sky-500/20">
-                  <img 
-                    src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" 
-                    alt="ZOL Studio AI Logo" 
-                    className="w-12 h-12 object-contain"
-                  />
-                </div>
+                <img 
+                  src="https://i.postimg.cc/htdLfcPh/logo.png" 
+                  alt="ZOL Studio AI Logo" 
+                  className="h-20 w-20 md:h-24 md:w-24 mb-4 object-contain"
+                />
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">Welcome to ZOL Studio AI</h1>
                 {view === 'login' ? (
                   <p className="text-gray-500 mb-6 text-sm text-center">Use your email or another service to continue with ZOL Studio AI for FREE</p>

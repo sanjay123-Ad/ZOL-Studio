@@ -62,9 +62,7 @@ const Header: React.FC<{ onLogoClick?: () => void; onStart: () => void }> = ({ o
           }`}
         >
           <button onClick={onLogoClick} className="flex items-center focus:outline-none group" aria-label="Go to homepage">
-            <div className="w-14 h-14 bg-sky-500 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/20 group-hover:opacity-90 transition-opacity">
-              <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-8 h-8 object-contain" />
-            </div>
+            <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-12 w-12 md:h-14 md:w-14 object-contain group-hover:opacity-90 transition-opacity" />
           </button>
           <div className="hidden md:flex items-center space-x-2 relative" ref={featuresRef}>
             <button
@@ -1036,9 +1034,7 @@ const LandingPage: React.FC = () => {
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="flex items-center mb-3 group w-fit"
               >
-                <div className="w-10 h-10 bg-sky-500 rounded-lg flex items-center justify-center mr-3 group-hover:opacity-90 transition-opacity">
-                  <img src="https://i.postimg.cc/BQ63Y0dw/Frame-13.png" alt="ZOL Studio AI" className="w-6 h-6 object-contain" />
-                </div>
+                <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-10 w-10 mr-3 object-contain group-hover:opacity-90 transition-opacity" />
                 <span className="text-lg font-bold text-slate-900">ZOL Studio AI</span>
               </button>
               <p className="text-slate-600 text-sm leading-relaxed max-w-xs mt-1">
