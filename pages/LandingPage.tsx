@@ -1065,18 +1065,18 @@ const LandingPage: React.FC = () => {
 
               {/* Column 2 */}
               <div className="flex flex-col space-y-2.5">
-                <button 
-                  onClick={() => navigate(PATHS.PRIVACY_POLICY)}
+                <a 
+                  href="/privacy-policy"
                   className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
                 >
                   Privacy Policy
-                </button>
-                <button 
-                  onClick={() => navigate(PATHS.TERMS_AND_CONDITIONS)}
+                </a>
+                <a 
+                  href="/terms-and-conditions"
                   className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
                 >
                   Terms of Service
-                </button>
+                </a>
               </div>
             </div>
           </div>
