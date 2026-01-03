@@ -184,7 +184,7 @@ const ResetPasswordPage: React.FC = () => {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <img 
-              src="https://i.postimg.cc/htdLfcPh/logo.png" 
+              src="/logo.png" 
               alt="ZOL Studio AI Logo" 
               className="h-20 w-20 md:h-24 md:w-24 object-contain cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => navigate(PATHS.LANDING)}

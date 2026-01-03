@@ -684,7 +684,7 @@ const AuthPage: React.FC = () => {
               <div className="flex flex-col items-center mb-8">
                 <div className="flex items-center gap-4 mb-6">
                   <img 
-                    src="https://i.postimg.cc/htdLfcPh/logo.png" 
+                    src="/logo.png" 
                     alt="ZOL Studio AI Logo" 
                     className="h-12 w-12 md:h-14 md:w-14 object-contain"
                   />

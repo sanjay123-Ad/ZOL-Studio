@@ -52,7 +52,7 @@ const TermsAndConditionsPage: React.FC = () => {
             className="flex items-center focus:outline-none group" 
             aria-label="Go to homepage"
           >
-            <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-12 w-12 md:h-14 md:w-14 object-contain group-hover:opacity-90 transition-opacity" />
+            <img src="/logo.png" alt="ZOL Studio AI" className="h-12 w-12 md:h-14 md:w-14 object-contain group-hover:opacity-90 transition-opacity" />
           </button>
           <div className="hidden md:flex items-center space-x-2">
             <button 
@@ -405,7 +405,7 @@ const TermsAndConditionsPage: React.FC = () => {
                 onClick={() => navigate(PATHS.LANDING)}
                 className="flex items-center mb-3 group w-fit"
               >
-                <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-10 w-10 mr-3 object-contain group-hover:opacity-90 transition-opacity" />
+                <img src="/logo.png" alt="ZOL Studio AI" className="h-10 w-10 mr-3 object-contain group-hover:opacity-90 transition-opacity" />
                 <span className="text-lg font-bold text-slate-900">ZOL Studio AI</span>
               </button>
               <p className="text-slate-600 text-sm leading-relaxed max-w-xs mt-1">
