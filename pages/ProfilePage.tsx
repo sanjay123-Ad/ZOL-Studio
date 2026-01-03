@@ -566,9 +566,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user }) => {
       }
 
       // 8. Sign out the user
-      const { error: signOutError } = await supabase.auth.signOut();
-      if (signOutError) {
-        throw signOutError;
+      try {
+        const { error: signOutError } = await supabase.auth.signOut({ scope: 'local' });
+        if (signOutError) {
+          console.warn('Signout error during account deletion:', signOutError);
+          // Continue anyway - account is already deleted
+        }
+      } catch (signOutErr) {
+        console.warn('Error during signout:', signOutErr);
+        // Continue anyway - account is already deleted
       }
 
       // 9. Navigate to landing page

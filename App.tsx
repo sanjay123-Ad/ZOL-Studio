@@ -392,28 +392,70 @@ const App: React.FC = () => {
     setIsLoggingOut(true);
 
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error logging out:', error);
-        // Still navigate even if there's an error to ensure user can log out
+      // First, check if there's a valid session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // If session exists, try to sign out with global scope (signs out from all devices)
+        const { error } = await supabase.auth.signOut({ scope: 'global' });
+        if (error) {
+          // If global signout fails, try local signout (clears only this device)
+          console.warn('Global signout failed, trying local signout:', error.message);
+          const { error: localError } = await supabase.auth.signOut({ scope: 'local' });
+          if (localError) {
+            console.warn('Local signout also failed:', localError.message);
+          }
+        }
+      } else {
+        // No session exists, just clear local state
+        console.log('No active session found, clearing local state only');
+        // Clear local auth state manually
+        await supabase.auth.signOut({ scope: 'local' });
       }
-      // Clear any user-specific state from localStorage
-      if (currentUser) {
-        // Clear user-specific state (this will be handled by stateStore if needed)
-        // The onAuthStateChange listener will handle setting currentUser to null and clearing assets.
-      }
-      // Navigate to landing page
-      navigate(PATHS.LANDING, { replace: true });
     } catch (err) {
-      console.error('Unexpected error during logout:', err);
-      // Still navigate to ensure user can log out
-      navigate(PATHS.LANDING, { replace: true });
-    } finally {
-      // Reset logging out state after a short delay to allow navigation
-      setTimeout(() => {
-        setIsLoggingOut(false);
-      }, 1000);
+      // Even if signout fails, we should still clear local state and navigate
+      console.warn('Error during logout, clearing local state:', err);
+      try {
+        // Attempt local signout as fallback
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch (fallbackErr) {
+        console.warn('Fallback local signout failed:', fallbackErr);
+      }
     }
+
+    // Always clear local state and navigate, regardless of API call success
+    try {
+      // Clear user-specific state from localStorage
+      if (currentUser) {
+        // Clear any user-specific localStorage items
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.includes(currentUser.id) || key.startsWith('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      
+      // Clear sessionStorage
+      sessionStorage.clear();
+      
+      // Clear state
+      setCurrentUser(null);
+      setGalleryAssets([]);
+      setCollectionAssets([]);
+      setHasFetchedGallery(false);
+      setHasFetchedCollection(false);
+    } catch (clearErr) {
+      console.warn('Error clearing local state:', clearErr);
+    }
+
+    // Always navigate to landing page
+    navigate(PATHS.LANDING, { replace: true });
+    
+    // Reset logging out state after a short delay
+    setTimeout(() => {
+      setIsLoggingOut(false);
+    }, 500);
   };
   
   if (loading) {

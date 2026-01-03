@@ -155,7 +155,12 @@ const ResetPasswordPage: React.FC = () => {
       setError(updateError.message);
     } else {
       setSuccess(true);
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch (signOutErr) {
+        console.warn('Error signing out after password reset:', signOutErr);
+        // Continue anyway - password was reset successfully
+      }
     }
     setLoading(false);
   };
