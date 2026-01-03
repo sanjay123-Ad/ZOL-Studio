@@ -178,13 +178,13 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout, isCollapsed, closeMob
             <Link 
               to={PATHS.HOME}
               onClick={closeMobileSidebar}
-              className={`mb-8 px-2 h-auto flex items-start cursor-pointer gap-3 hover:opacity-80 transition-opacity ${isCollapsed ? 'justify-center' : ''}`} 
+              className={`mb-8 px-2 h-auto flex items-center cursor-pointer gap-3 hover:opacity-80 transition-opacity ${isCollapsed ? 'justify-center' : ''}`} 
             >
                 <img src="https://i.postimg.cc/htdLfcPh/logo.png" alt="ZOL Studio AI" className="h-10 w-10 md:h-12 md:w-12 object-contain flex-shrink-0" />
                 {!isCollapsed && (
-                    <div className="flex flex-col">
-                        <span className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-none">ZOL Studio AI</span>
-                        <span className="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 tracking-[0.25em] uppercase mt-1">Creative Platform</span>
+                    <div className="flex flex-col justify-center min-w-0 flex-1">
+                        <span className="font-black text-xl text-slate-900 dark:text-white tracking-tight leading-none whitespace-nowrap">ZOL Studio AI</span>
+                        <span className="text-[10px] font-extrabold text-sky-600 dark:text-sky-400 tracking-[0.25em] uppercase mt-1 whitespace-nowrap">Creative Platform</span>
                     </div>
                 )}
             </Link>
