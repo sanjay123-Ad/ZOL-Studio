@@ -417,15 +417,18 @@ const TermsAndConditionsPage: React.FC = () => {
             <div className="flex flex-row gap-12 md:gap-16">
               {/* Column 1 */}
               <div className="flex flex-col space-y-2.5">
-                <button 
-                  onClick={() => navigate(PATHS.PRICING)}
+                <a
+                  href="/pricing"
                   className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
                 >
                   Pricing
-                </button>
-                <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
+                </a>
+                <a
+                  href="/contact"
+                  className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
+                >
                   Contact
-                </button>
+                </a>
               </div>
 
               {/* Column 2 */}

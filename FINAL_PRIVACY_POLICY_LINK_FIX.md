@@ -180,3 +180,4 @@ If the Privacy Policy link is missing from your homepage, we need to add it. Bas
 
 **Status:** ✅ **Almost there!** Just need to verify the privacy policy link and wait for Google to re-crawl. You're 99% done! 🎉
 
+

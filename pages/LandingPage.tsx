@@ -1058,9 +1058,12 @@ const LandingPage: React.FC = () => {
                 >
                   Pricing
                 </button>
-                <button className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium">
+                <a
+                  href="/contact"
+                  className="text-slate-700 hover:text-sky-600 text-sm transition-colors text-left font-medium"
+                >
                   Contact
-                </button>
+                </a>
               </div>
 
               {/* Column 2 */}

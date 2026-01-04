@@ -21,6 +21,7 @@ import UsageAnalyticsPage from './pages/UsageAnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
+import ContactPage from './pages/ContactPage';
 import { User, GeneratedAsset, CollectionAsset } from './types';
 import Layout from './components/Layout';
 import { supabase } from './services/supabase';
@@ -360,6 +361,7 @@ const App: React.FC = () => {
     const isResetPasswordPage = location.pathname === PATHS.RESET_PASSWORD;
     const isPrivacyPolicyPage = location.pathname === PATHS.PRIVACY_POLICY;
     const isTermsAndConditionsPage = location.pathname === PATHS.TERMS_AND_CONDITIONS;
+    const isContactPage = location.pathname === PATHS.CONTACT;
 
     if (currentUser) {
       // User is logged in, fetch their data.
@@ -367,8 +369,8 @@ const App: React.FC = () => {
       fetchCollectionAssets(currentUser.id);
 
       // If user is on a public page (e.g., after login), redirect them appropriately.
-      // BUT: Don't redirect from reset-password, privacy-policy, or terms-and-conditions pages
-      if (isPublicPath && !isResetPasswordPage && !isPrivacyPolicyPage && !isTermsAndConditionsPage) {
+      // BUT: Don't redirect from reset-password, privacy-policy, terms-and-conditions, or contact pages
+      if (isPublicPath && !isResetPasswordPage && !isPrivacyPolicyPage && !isTermsAndConditionsPage && !isContactPage) {
         const redirectPath = sessionStorage.getItem('zola_redirect_path');
         sessionStorage.removeItem('zola_redirect_path');
         const targetPath = redirectPath && redirectPath !== PATHS.RESET_PASSWORD ? redirectPath : PATHS.HOME;
@@ -383,11 +385,11 @@ const App: React.FC = () => {
       setHasFetchedCollection(false);
 
       // If user tries to access a private page, save the path and redirect to landing.
-      // BUT: Allow access to reset-password, privacy-policy, and terms-and-conditions pages
-      if (!isPublicPath && !isResetPasswordPage && !isPrivacyPolicyPage && !isTermsAndConditionsPage) {
+      // BUT: Allow access to reset-password, privacy-policy, terms-and-conditions, and contact pages
+      if (!isPublicPath && !isResetPasswordPage && !isPrivacyPolicyPage && !isTermsAndConditionsPage && !isContactPage) {
         sessionStorage.setItem('zola_redirect_path', location.pathname);
         navigate(PATHS.LANDING, { replace: true });
-      } else if (isResetPasswordPage || isPrivacyPolicyPage || isTermsAndConditionsPage) {
+      } else if (isResetPasswordPage || isPrivacyPolicyPage || isTermsAndConditionsPage || isContactPage) {
         sessionStorage.removeItem('zola_redirect_path');
       }
     }
@@ -489,6 +491,7 @@ const App: React.FC = () => {
         <Route path={PATHS.RESET_PASSWORD} element={<ResetPasswordPage />} />
         <Route path={PATHS.PRIVACY_POLICY} element={<PrivacyPolicyPage />} />
         <Route path={PATHS.TERMS_AND_CONDITIONS} element={<TermsAndConditionsPage />} />
+        <Route path={PATHS.CONTACT} element={<ContactPage />} />
         {currentUser ? (
           <>
               {/* Routes with the main sidebar layout */}

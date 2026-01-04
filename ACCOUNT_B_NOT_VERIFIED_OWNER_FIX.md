@@ -284,3 +284,4 @@ If you prefer to use Account A (already verified) for OAuth:
 
 **Status:** 🔧 **Account B needs to verify domain ownership!** Use Option 1 (verify Account B) - it's the quickest fix!
 
+

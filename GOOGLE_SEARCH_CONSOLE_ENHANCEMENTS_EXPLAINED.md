@@ -172,3 +172,4 @@ The favicon will appear in search results automatically, and your structured dat
 
 **You're all set! Just wait for the favicon to appear in search results (1-3 days).** 🚀
 
+

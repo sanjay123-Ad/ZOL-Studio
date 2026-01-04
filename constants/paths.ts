@@ -19,4 +19,5 @@ export const PATHS = {
   USAGE_ANALYTICS: '/usage_analytics',
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_AND_CONDITIONS: '/terms-and-conditions',
+  CONTACT: '/contact',
 };
