@@ -26,10 +26,7 @@ const PricingPage: React.FC = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-<<<<<<< HEAD
   const [managingSubscription, setManagingSubscription] = useState(false);
-=======
->>>>>>> 5d5485e7a21aa905e7ec40865cfa3cdc0b3d0abe
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
   const navigate = useNavigate();
@@ -136,7 +133,6 @@ const PricingPage: React.FC = () => {
     );
   };
 
-<<<<<<< HEAD
   // Handle "Manage Subscription" - redirect to Lemon Squeezy customer portal (same as Profile page)
   const handleManageSubscription = async () => {
     if (!userPlan?.customerId && !userPlan?.subscriptionId) {
@@ -165,17 +161,6 @@ const PricingPage: React.FC = () => {
       window.open('https://app.lemonsqueezy.com/my-orders', '_blank');
     } finally {
       setManagingSubscription(false);
-=======
-  // Handle "Manage Subscription" - redirect to Lemon Squeezy customer portal
-  const handleManageSubscription = () => {
-    if (userPlan?.customerId) {
-      // Lemon Squeezy customer portal URL format
-      // Note: You'll need to get the actual portal URL from Lemon Squeezy API
-      // For now, we'll redirect to a manage subscription page or show a message
-      alert('Manage Subscription feature coming soon! You can manage your subscription through your Lemon Squeezy account.');
-      // TODO: Implement Lemon Squeezy customer portal link
-      // window.open(`https://app.lemonsqueezy.com/my-orders/${userPlan.customerId}`, '_blank');
->>>>>>> 5d5485e7a21aa905e7ec40865cfa3cdc0b3d0abe
     }
   };
 
@@ -370,15 +355,9 @@ const PricingPage: React.FC = () => {
                             ? 'bg-sky-600 hover:bg-sky-700 text-white'
                             : 'bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900'
                         }`}
-<<<<<<< HEAD
                         disabled={isCheckingOut || (isActive && managingSubscription)}
                       >
                         {isCheckingOut || (isActive && managingSubscription)
-=======
-                        disabled={isCheckingOut}
-                      >
-                        {isCheckingOut
->>>>>>> 5d5485e7a21aa905e7ec40865cfa3cdc0b3d0abe
                           ? 'Redirecting…'
                           : isActive
                           ? 'Manage Subscription'

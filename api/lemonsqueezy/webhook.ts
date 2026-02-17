@@ -269,7 +269,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Find the user ID from auth.users using email (Admin API)
-<<<<<<< HEAD
     // Note: getUserByEmail doesn't exist, so we paginate listUsers to find user by email
     const emailLower = customerEmail.toLowerCase();
     let user: { id: string } | undefined;
@@ -300,21 +299,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       page++;
     }
 
-=======
-    // Note: getUserByEmail doesn't exist in v2.81.0, so we use listUsers and filter
-    const { data: authUsersData, error: authError } = await supabaseAdmin.auth.admin.listUsers();
-    
-    if (authError) {
-      console.error(`Error fetching users: ${customerEmail}`, authError);
-      return res.status(500).send('Failed to fetch users');
-    }
-
-    // Find user by email (case-insensitive)
-    const user = authUsersData?.users?.find(
-      (u: any) => u.email?.toLowerCase() === customerEmail.toLowerCase()
-    );
-    
->>>>>>> 5d5485e7a21aa905e7ec40865cfa3cdc0b3d0abe
     if (!user) {
       console.error(`User not found with email: ${customerEmail}`);
       return res.status(404).send('User not found');
@@ -357,12 +341,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Both use the same monthly credit allocation
       const credits = getCreditsForPlan(planTier, 'monthly'); // Always use monthly credits
       const expiresAt = calculateExpirationDate(billingPeriod); // Monthly expiration for both
-<<<<<<< HEAD
       // Use expiresAt for next reset so cron runs when credits expire (no gap)
       const nextResetAt = expiresAt;
-=======
-      const nextResetAt = calculateNextCreditResetDate(billingPeriod, renewsAt ? new Date(renewsAt) : undefined);
->>>>>>> 5d5485e7a21aa905e7ec40865cfa3cdc0b3d0abe
       
       // Get current profile to check if this is a plan change or renewal
       const { data: currentProfile } = await supabaseAdmin
