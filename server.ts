@@ -831,6 +831,35 @@ async function createServer() {
     }
   });
 
+  // --- Lemon Squeezy: customer portal (Manage Subscription) ---
+  app.post('/api/lemonsqueezy/customer-portal', async (req, res) => {
+    try {
+      if (!LEMONSQUEEZY_API_KEY) {
+        return res.status(500).json({ error: 'Lemon Squeezy API key not configured' });
+      }
+      const { customerId } = req.body ?? {};
+      if (!customerId) {
+        return res.status(400).json({ error: 'Customer ID is required' });
+      }
+      const response = await fetch(`https://api.lemonsqueezy.com/v1/customers/${customerId}`, {
+        headers: {
+          Accept: 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          Authorization: `Bearer ${LEMONSQUEEZY_API_KEY}`,
+        },
+      });
+      const data = (await response.json()) as any;
+      const portalUrl = data?.data?.attributes?.urls?.customer_portal;
+      if (!portalUrl) {
+        return res.json({ url: 'https://app.lemonsqueezy.com/my-orders' });
+      }
+      return res.json({ url: portalUrl });
+    } catch (err) {
+      console.error('Error fetching customer portal URL:', err);
+      return res.json({ url: 'https://app.lemonsqueezy.com/my-orders' });
+    }
+  });
+
   // Universal SSR handler for all other requests
   app.use('*', async (req, res, next) => {
     const url = req.originalUrl;

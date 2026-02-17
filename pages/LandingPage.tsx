@@ -1152,7 +1152,7 @@ const LandingPage: React.FC = () => {
           {/* Copyright */}
           <div className="pt-8 border-t border-slate-300/60">
             <p className="text-center text-sm text-slate-500">
-              &copy; {new Date().getFullYear()} Zol Studio. All rights reserved.
+              &copy; {new Date().getFullYear()} Zol Studio AI. All rights reserved.
             </p>
           </div>
         </div>
