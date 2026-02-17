@@ -1,0 +1,265 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { User, GeneratedAsset } from '../types';
+import Spinner from '../components/Spinner';
+import { DownloadIcon, ShareIcon, TrashIcon, ExpandIcon } from '../components/icons';
+
+interface GalleryPageProps {
+  user: User;
+  assets: GeneratedAsset[];
+  isLoading: boolean;
+  error: string | null;
+  onRefresh: () => void;
+  onDelete: (asset: GeneratedAsset) => void;
+  deletingAssetId: string | null;
+}
+
+const dataURLtoFile = async (dataUrl: string, filename: string): Promise<File | null> => {
+  try {
+    const res = await fetch(dataUrl);
+    const blob: Blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+  } catch (error) {
+    console.error('Error converting data URL to File:', error);
+    return null;
+  }
+}
+
+const GalleryPage: React.FC<GalleryPageProps> = ({ user, assets, isLoading, error, onRefresh, onDelete, deletingAssetId }) => {
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const closedViaBackButton = useRef<boolean>(false);
+  
+  const handleDownload = async (asset: GeneratedAsset) => {
+    if (downloadingId) return; // Prevent multiple concurrent downloads
+    setDownloadingId(asset.id);
+    try {
+        const response = await fetch(asset.display_url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `zol-studio-ai-gallery-${asset.id.substring(0, 8)}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Download failed:', error);
+        alert('Could not download the image. Please try again.');
+    } finally {
+        setDownloadingId(null);
+    }
+  };
+
+  const handleShare = async (asset: GeneratedAsset) => {
+    const fileName = `zol-studio-ai-gallery-${asset.id.substring(0, 8)}.png`;
+    const shareText = `Check out this asset from Zol Studio AI!`;
+    const file = await dataURLtoFile(asset.display_url, fileName);
+
+    if (!file) {
+      alert("Could not prepare image for sharing.");
+      return;
+    }
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          title: 'Zol Studio AI Asset',
+          text: shareText,
+          files: [file],
+        });
+      } catch (error) { console.log('Sharing cancelled or failed', error); }
+    } else {
+        alert("Sharing not supported on this browser. Please download the image instead.");
+    }
+  };
+
+  // Handle ESC key to close fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && fullscreenImage) {
+        closedViaBackButton.current = false;
+        setFullscreenImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [fullscreenImage]);
+
+  // Handle browser back button
+  useEffect(() => {
+    if (fullscreenImage) {
+      window.history.pushState({ modalOpen: true }, '');
+    }
+  }, [fullscreenImage]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (fullscreenImage) {
+        closedViaBackButton.current = true;
+        setFullscreenImage(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [fullscreenImage]);
+  
+  return (
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-gradient-to-b from-sky-50 via-white to-white dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 transition-colors duration-200">
+      <div className="w-full max-w-7xl mx-auto">
+        <header className="mb-8 flex flex-wrap justify-between items-center gap-4">
+            <div>
+              <h1 className="text-display font-bold text-[#2E1E1E] dark:text-white font-headline">My Gallery</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Your saved virtual try-ons and generated assets.</p>
+            </div>
+            <button 
+              onClick={onRefresh} 
+              disabled={isLoading}
+              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-semibold rounded-full shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 text-sky-600 dark:text-sky-400 ${isLoading ? 'animate-spin transition-all duration-300 ease-linear' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0121.5 13M20 20l-1.5-1.5A9 9 0 012.5 11" />
+              </svg>
+              Refresh
+            </button>
+        </header>
+
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner />
+          </div>
+        ) : error ? (
+            <div className="text-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                <p>{error}</p>
+            </div>
+        ) : assets.length === 0 ? (
+          <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Your gallery is empty.</h2>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">Go to the 'Virtual Photoshoot' to create and save your first look!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+            {assets.map((asset) => {
+              return (
+                <div key={asset.id} className="group relative aspect-[4/5] bg-gray-100 dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                  <img
+                    src={asset.display_url}
+                    alt={`Generated asset from ${asset.source_feature}`}
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 cursor-pointer"
+                    loading="lazy"
+                    onClick={() => {
+                      closedViaBackButton.current = false;
+                      setFullscreenImage(asset.display_url);
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
+                          <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  closedViaBackButton.current = false;
+                                  setFullscreenImage(asset.display_url);
+                              }}
+                              className="p-2 bg-black/50 text-white rounded-full hover:bg-purple-600 transition-colors"
+                              aria-label="Expand to fullscreen"
+                              title="Expand to fullscreen"
+                          >
+                              <ExpandIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDownload(asset);
+                              }}
+                              disabled={!!downloadingId}
+                              className="p-2 bg-black/50 text-white rounded-full hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-wait"
+                              aria-label="Download asset"
+                              title="Download"
+                          >
+                            {downloadingId === asset.id ? <div className="w-4 h-4"><Spinner /></div> : <DownloadIcon className="h-4 w-4" />}
+                          </button>
+                          <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleShare(asset);
+                              }}
+                              className="p-2 bg-black/50 text-white rounded-full hover:bg-green-600 transition-colors"
+                              aria-label="Share asset"
+                              title="Share"
+                          >
+                              <ShareIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDelete(asset);
+                              }}
+                              disabled={!!deletingAssetId}
+                              className="p-2 bg-black/50 text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              aria-label="Delete asset"
+                              title="Delete"
+                          >
+                              {deletingAssetId === asset.id ? (
+                                  <div className="w-4 h-4"><Spinner /></div>
+                              ) : (
+                                  <TrashIcon className="h-4 w-4" />
+                              )}
+                          </button>
+                      </div>
+                      <div className="absolute bottom-0 left-0 p-4">
+                        <p className="text-white font-bold text-sm capitalize">{asset.source_feature.replace(/_/g, ' ')}</p>
+                        <p className="text-white/80 text-xs">{new Date(asset.created_at).toLocaleDateString()}</p>
+                      </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 dark:bg-black/95 z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => {
+            closedViaBackButton.current = false;
+            setFullscreenImage(null);
+          }}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              closedViaBackButton.current = false;
+              setFullscreenImage(null);
+            }}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 p-2 rounded-full hover:bg-white/10 transition-colors z-10"
+            title="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <img 
+            key={`fullscreen-${fullscreenImage.substring(0, 50)}`}
+            src={fullscreenImage} 
+            alt="Fullscreen view" 
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+            onError={(e) => {
+              console.error('Failed to load fullscreen image');
+              setFullscreenImage(null);
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GalleryPage;

@@ -1,0 +1,43 @@
+# robots.txt for Zol Studio AI
+
+User-agent: *
+Allow: /
+Allow: /landing
+Allow: /pricing
+Allow: /about
+Allow: /privacy-policy
+Allow: /terms-and-conditions
+Allow: /auth
+
+# Disallow private/user-specific pages
+Disallow: /home
+Disallow: /virtual_photoshoot
+Disallow: /stylescene
+Disallow: /asset_generator
+Disallow: /catalog_forged
+Disallow: /pose_mimic
+Disallow: /gallery
+Disallow: /asset_collection
+Disallow: /profile
+Disallow: /settings
+Disallow: /usage_analytics
+Disallow: /model_gallery
+Disallow: /background_gallery
+Disallow: /reset-password
+
+# Allow static assets
+Allow: /assets/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.ico
+Allow: /*.woff
+Allow: /*.woff2
+
+# Sitemap
+Sitemap: https://zolstudio.com/sitemap.xml
+
