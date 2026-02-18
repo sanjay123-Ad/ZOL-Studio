@@ -11,18 +11,15 @@ jobs:
   reset-credits:
     runs-on: ubuntu-latest
     name: Reset Monthly Credits
-    
+
     steps:
       - name: Call Credit Reset Endpoint
         run: |
-          curl -L -X POST ${{ secrets.VERCEL_CREDIT_RESET_URL }} \
+          echo "Calling credit reset endpoint..."
+          curl -L -X POST "${{ secrets.VERCEL_CREDIT_RESET_URL }}" \
             -H "x-reset-secret: ${{ secrets.CREDIT_RESET_SECRET }}" \
             -H "Content-Type: application/json" \
-            -w "\nHTTP Status: %{http_code}\n"
-        
-      - name: Display Result
-        if: always()
-        run: |
-          echo "✅ Credit reset job completed"
-          echo "Check your Vercel function logs for details"
+            -w "\n\nHTTP Status: %{http_code}\n"
+          echo ""
+          echo "✅ Credit reset job completed. Check response above (200 = OK; body shows reset count)."
 

@@ -696,15 +696,14 @@ async function createServer() {
           // Calculate rollover (unused credits from previous month)
           const remainingCredits = Math.max(0, (user.total_credits || 0) - (user.used_credits || 0));
 
-          // Calculate next reset date (1 month from now)
-          const nextResetDate = new Date();
+          // Next reset = current reset date + 1 month (keeps subscription day, e.g. 24th each month)
+          const currentReset = new Date(user.next_credit_reset_at!);
+          const nextResetDate = new Date(currentReset);
           nextResetDate.setMonth(nextResetDate.getMonth() + 1);
-          nextResetDate.setDate(1);
           nextResetDate.setHours(0, 0, 0, 0);
 
-          // Calculate expiration (1 month from now)
-          const expireDate = new Date();
-          expireDate.setMonth(expireDate.getMonth() + 1);
+          // Expiry = same as next reset (credits expire when next cycle starts)
+          const expireDate = new Date(nextResetDate);
 
           // New total = monthly credits + rollover (unused credits)
           const newTotalCredits = monthlyCredits + remainingCredits;

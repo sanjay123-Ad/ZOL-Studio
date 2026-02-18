@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-// Helper function to get credits for a plan tier
-function getCreditsForPlan(planTier: 'basic' | 'pro' | 'agency', billingPeriod: 'monthly' | 'annual'): number {
+// Helper function to get credits for a plan tier (planTier normalized to lowercase)
+function getCreditsForPlan(planTier: string | null, _billingPeriod: 'monthly' | 'annual'): number {
   const creditsMap: Record<string, number> = {
     'basic_monthly': 175,
     'basic_annual': 175,
@@ -11,8 +11,9 @@ function getCreditsForPlan(planTier: 'basic' | 'pro' | 'agency', billingPeriod: 
     'agency_monthly': 550,
     'agency_annual': 550,
   };
-  const key = `${planTier}_monthly`; // Always use monthly key
-  return creditsMap[key] || 0;
+  const tier = (planTier || '').toString().toLowerCase().trim();
+  const key = `${tier}_monthly`;
+  return creditsMap[key] ?? 0;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -46,15 +47,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // Use UTC so cron (midnight UTC) and server timezone match
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    const day = now.getUTCDate();
+    const endOfTodayUTC = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 
-    // Find all users whose credits should reset today
+    // Find all users whose next_credit_reset_at is on or before end of today (UTC)
+    // This includes any time on "today" (e.g. 14:30 same day), not just midnight
     const { data: usersToReset, error: fetchError } = await supabaseAdmin
       .from('profiles')
       .select('id, plan_tier, billing_period, plan_status, total_credits, used_credits, next_credit_reset_at')
       .eq('plan_status', 'active')
       .not('next_credit_reset_at', 'is', null)
-      .lte('next_credit_reset_at', today.toISOString());
+      .lte('next_credit_reset_at', endOfTodayUTC.toISOString());
 
     if (fetchError) {
       console.error('Error fetching users for credit reset:', fetchError);
@@ -71,24 +77,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     for (const user of usersToReset) {
       try {
-        // Get monthly credits for the plan (same for monthly and annual)
-        const monthlyCredits = getCreditsForPlan(user.plan_tier as 'basic' | 'pro' | 'agency', 'monthly');
-        
+        // Get monthly credits for the plan (same for monthly and annual); normalize tier to lowercase
+        const monthlyCredits = getCreditsForPlan(user.plan_tier, 'monthly');
+        if (monthlyCredits <= 0) {
+          console.warn(`Skipping user ${user.id}: invalid or missing plan_tier "${user.plan_tier}"`);
+          continue;
+        }
+
         // Calculate rollover (unused credits from previous month)
         const remainingCredits = Math.max(0, (user.total_credits || 0) - (user.used_credits || 0));
-        
+
         // New total = monthly credits + rollover
         const newTotalCredits = monthlyCredits + remainingCredits;
         
-        // Calculate next reset date (1 month from now)
-        const nextResetDate = new Date();
+        // Next reset = current reset date + 1 month (keeps subscription day, e.g. 24th each month)
+        const currentReset = new Date(user.next_credit_reset_at!);
+        const nextResetDate = new Date(currentReset);
         nextResetDate.setMonth(nextResetDate.getMonth() + 1);
-        nextResetDate.setDate(1); // Set to start of month
         nextResetDate.setHours(0, 0, 0, 0);
         
-        // Calculate expiration date (1 month from now)
-        const expireDate = new Date();
-        expireDate.setMonth(expireDate.getMonth() + 1);
+        // Expiry = same as next reset (credits expire when next cycle starts)
+        const expireDate = new Date(nextResetDate);
 
         // Update user's credits
         const { error: updateError } = await supabaseAdmin
@@ -98,6 +107,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             used_credits: 0,
             credits_expire_at: expireDate.toISOString(),
             next_credit_reset_at: nextResetDate.toISOString(),
+            last_credits_allocated_at: new Date().toISOString(),
           })
           .eq('id', user.id);
 

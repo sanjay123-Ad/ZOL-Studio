@@ -323,7 +323,10 @@ const AuthPage: React.FC = () => {
       }
 
       // Create profile with sign-up bonus (trigger will handle credit allocation)
+      // Timestamps are stored in UTC (Supabase shows +00). In the app we display in user's local time via toLocaleDateString.
       if (data.user) {
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 1 month from now
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
@@ -333,9 +336,9 @@ const AuthPage: React.FC = () => {
             plan_status: 'inactive',
             total_credits: 10, // Sign-up bonus
             used_credits: 0,
-            credits_expire_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 1 month from now
+            credits_expire_at: expiresAt.toISOString(),
             signup_bonus_given: true,
-            last_credits_allocated_at: new Date().toISOString(),
+            last_credits_allocated_at: now.toISOString(),
           }, { onConflict: 'id' });
 
         if (profileError) {
