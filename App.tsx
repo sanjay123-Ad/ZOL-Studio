@@ -293,7 +293,9 @@ const App: React.FC = () => {
         try {
             console.log('[Auth] processUserSession called', { isNewSignIn, hasSession: !!session });
             if (!session?.user) {
-              // No user in session — clear state handled by caller
+              // No user in session — clear state and apply system theme
+              setCurrentUser(null);
+              applyTheme('system');
               return;
             }
 
@@ -384,10 +386,8 @@ const App: React.FC = () => {
             // Load and apply theme preference
             const theme = (profile?.theme_preference as 'light' | 'dark' | 'system') || 'system';
             applyTheme(theme);
-        } else {
-            setCurrentUser(null);
-            // Reset to system theme on logout
-            applyTheme('system');
+        } catch (err) {
+            console.error('Error handling auth session:', err);
         }
     };
 
