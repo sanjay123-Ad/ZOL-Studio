@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const hasHandledPasswordRecovery = useRef(false);
+  const hasHandledGoogleWelcome = useRef(false);
 
   // State for session-cached gallery
   const [galleryAssets, setGalleryAssets] = useState<GeneratedAsset[]>([]);
@@ -307,7 +308,8 @@ const App: React.FC = () => {
             const createdAt = new Date(session.user.created_at);
             const isRecentlyCreated = (Date.now() - createdAt.getTime()) < 30 * 60 * 1000; // within 30 min
 
-            if (isNewSignIn && isGoogleUser && isNewUser && isRecentlyCreated) {
+            if (isNewSignIn && isGoogleUser && isNewUser && isRecentlyCreated && !hasHandledGoogleWelcome.current) {
+              hasHandledGoogleWelcome.current = true;
               const googleUsername =
                 session.user.user_metadata?.full_name ||
                 session.user.user_metadata?.name ||
@@ -370,8 +372,10 @@ const App: React.FC = () => {
     });
 
     // Then, subscribe to any future auth state changes (e.g., login, logout).
+    // IMPORTANT: Google OAuth redirects fire INITIAL_SESSION, not SIGNED_IN
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-        processUserSession(session, event === 'SIGNED_IN');
+        const isNewAuth = event === 'SIGNED_IN' || event === 'INITIAL_SESSION';
+        processUserSession(session, isNewAuth);
 
         if (event === 'PASSWORD_RECOVERY') {
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
