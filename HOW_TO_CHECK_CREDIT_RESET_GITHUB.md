@@ -102,6 +102,38 @@ So: **from GitHub, you’ve confirmed it’s working when a run succeeds and the
 
 ---
 
+## How to Check in Vercel
+
+When GitHub shows `"reset":1,"total":1` and **HTTP Status: 200**, the request hit your Vercel app. Here’s how to verify the same run in Vercel.
+
+### 1. Open your project and logs
+
+1. Go to [vercel.com](https://vercel.com) and log in.
+2. Open the **project** that hosts ZOL Studio (the one with `api/credits/monthly-reset`).
+3. In the top nav, click **Logs** (or **Deployments** → pick a deployment → **Functions** / **Logs**).
+
+### 2. Find the credit-reset function
+
+- In **Logs**: filter or scroll for requests to **`/api/credits/monthly-reset`** around the time you ran the GitHub workflow.
+- Or: **Deployments** → latest deployment → **Functions** tab → find **`api/credits/monthly-reset`** (or similar) and open it to see invocations.
+
+### 3. What you’ll see in Vercel
+
+- **Request:** A **POST** to `/api/credits/monthly-reset` with status **200**.
+- **Runtime logs** (if you open that invocation): The `console.log` / `console.error` output from the function, for example:
+  - `✅ Reset credits for user <id>: 460 credits (360 new + 100 rollover)`
+  - Or: `✅ No users need credit reset today` if no one was due.
+
+So: **GitHub** confirms the HTTP call and response (`reset: 1`); **Vercel** shows that the same request was executed and the serverless function’s internal logs (which user was reset, new total, rollover).
+
+### 4. If you don’t see logs
+
+- **Logs** may be under **Project → Logs** with a time filter; set the time range to when you ran the workflow.
+- On the **Hobby** plan, log retention is limited; run the workflow again and check immediately.
+- Ensure the deployment that’s live (production domain) is the one you’re viewing; **Logs** usually show the deployment that received the request.
+
+---
+
 ## 2. Step-by-Step: Check That Reset Is Allocating Properly
 
 ### Step 1: Confirm GitHub Secrets

@@ -10,6 +10,9 @@ const AboutPage: React.FC<AboutPageProps> = () => {
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-bold text-[#2E1E1E] dark:text-white font-headline">About Zol Studio AI</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg">AI-powered creative platform for fashion & design</p>
+            <div className="inline-flex items-center mt-4 bg-gradient-to-r from-sky-500 to-blue-600 rounded-full px-5 py-2 shadow-md">
+              <span className="text-sm font-bold text-white tracking-widest uppercase">ZOL — Zap On Looks</span>
+            </div>
           </div>
 
           <div className="space-y-12">
@@ -50,7 +53,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
                   <strong>Our Mission:</strong> To democratize high-end e-commerce photography for fashion brands of all sizes.
                 </p>
                 <p>
-                  We are Zol Studio AI, a team of engineers and fashion industry veterans who believe that stunning product visuals shouldn't require expensive photoshoots and long turnaround times. By harnessing the power of generative AI, we provide tools that are fast, cost-effective, and produce results that rival traditional photography. We're passionate about empowering brands to tell their stories and sell their products more effectively in the digital marketplace.
+                  We are Zol Studio AI — <strong>ZOL: Zap On Looks</strong>. A team of engineers and fashion industry veterans who believe that stunning product visuals shouldn't require expensive photoshoots and long turnaround times. The name says it all: zap any look onto your product, instantly. By harnessing the power of generative AI, we provide tools that are fast, cost-effective, and produce results that rival traditional photography. We're passionate about empowering brands to tell their stories and sell their products more effectively in the digital marketplace.
                 </p>
               </div>
             </section>

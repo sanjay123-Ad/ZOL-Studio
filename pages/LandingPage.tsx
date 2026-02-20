@@ -534,12 +534,17 @@ const LandingPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left column - content */}
               <div className="text-left order-2 lg:order-1">
-                <div className="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full px-4 py-1.5 mb-6 shadow-sm">
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
-                  </span>
-                  <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Powered by Advanced AI</span>
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                  <div className="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full px-4 py-1.5 shadow-sm">
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
+                    </span>
+                    <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Powered by Advanced AI</span>
+                  </div>
+                  <div className="inline-flex items-center bg-gradient-to-r from-sky-500 to-blue-600 rounded-full px-4 py-1.5 shadow-sm">
+                    <span className="text-xs font-bold text-white tracking-widest uppercase">ZOL — Zap On Looks</span>
+                  </div>
                 </div>
 
                 <h1 className="font-headline text-[clamp(2.25rem,5vw,3.25rem)] font-bold text-slate-900 tracking-tight leading-[1.1] mb-6">
@@ -632,7 +637,7 @@ const LandingPage: React.FC = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
             <div className="text-center mb-14">
               <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3">Why Zol Studio AI?</h2>
-              <p className="text-slate-600 font-medium">Clear benefits. Dramatic cost savings.</p>
+              <p className="text-slate-600 font-medium">ZOL — <span className="font-semibold text-sky-600">Zap On Looks.</span> Clear benefits. Dramatic cost savings.</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               {/* Traditional Way */}
