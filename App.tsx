@@ -285,12 +285,18 @@ const App: React.FC = () => {
   // Effect 1: Handle Auth State Changes. This is now more robust.
   useEffect(() => {
     // This function processes a session and updates user state. It's used for both initial load and subsequent changes.
-    // isNewSignIn = true only when event === 'SIGNED_IN' (not on page reload / session restore)
+    // isNewSignIn = true when this is a fresh sign-in (SIGNED_IN or INITIAL_SESSION)
     const processUserSession = async (
       session: import('@supabase/supabase-js').Session | null,
       isNewSignIn = false
     ) => {
-        if (session?.user) {
+        try {
+            console.log('[Auth] processUserSession called', { isNewSignIn, hasSession: !!session });
+            if (!session?.user) {
+              // No user in session — clear state handled by caller
+              return;
+            }
+
             const { data: profiles, error: profileError } = await supabase
               .from('profiles')
               .select('username, avatar_url, theme_preference, signup_bonus_given')
@@ -298,15 +304,26 @@ const App: React.FC = () => {
               .limit(1);
 
             if (profileError) console.warn('Could not fetch user profile on auth change:', profileError.message);
-            
             const profile = profiles?.[0];
+            console.log('[Auth] fetched profile', { profile });
 
             // Detect new Google OAuth users and send welcome email + create profile
-            const provider = session.user.app_metadata?.provider;
+            const provider = session.user.app_metadata?.provider || session.user.identities?.[0]?.provider;
             const isGoogleUser = provider === 'google';
             const isNewUser = !profile?.signup_bonus_given;
-            const createdAt = new Date(session.user.created_at);
-            const isRecentlyCreated = (Date.now() - createdAt.getTime()) < 30 * 60 * 1000; // within 30 min
+            const createdAt = session.user?.created_at ? new Date(session.user.created_at) : null;
+            const isRecentlyCreated = createdAt ? (Date.now() - createdAt.getTime()) < 30 * 60 * 1000 : false; // within 30 min
+
+            console.log('[Auth] google-welcome-check', {
+              provider,
+              isGoogleUser,
+              isNewUser,
+              createdAt: createdAt?.toISOString(),
+              isRecentlyCreated,
+              hasHandledGoogleWelcome: hasHandledGoogleWelcome.current,
+              userId: session.user.id,
+              userEmail: session.user.email,
+            });
 
             if (isNewSignIn && isGoogleUser && isNewUser && isRecentlyCreated && !hasHandledGoogleWelcome.current) {
               hasHandledGoogleWelcome.current = true;
@@ -334,7 +351,7 @@ const App: React.FC = () => {
                 if (error) console.warn('Could not create Google user profile:', error.message);
               });
 
-              // Send welcome email (fire-and-forget)
+              // Send welcome email (fire-and-forget) and log response
               fetch('/api/emails/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -343,7 +360,16 @@ const App: React.FC = () => {
                   email: session.user.email,
                   username: googleUsername,
                 }),
-              }).catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
+              })
+                .then(async (res) => {
+                  try {
+                    const json = await res.json();
+                    console.log('[Email] welcome send response', json);
+                  } catch (err) {
+                    console.warn('[Email] welcome send non-json response', err);
+                  }
+                })
+                .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
             }
 
             const userEmail = session.user.email ?? '';
