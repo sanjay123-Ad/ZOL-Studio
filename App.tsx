@@ -284,21 +284,65 @@ const App: React.FC = () => {
   // Effect 1: Handle Auth State Changes. This is now more robust.
   useEffect(() => {
     // This function processes a session and updates user state. It's used for both initial load and subsequent changes.
-    const processUserSession = async (session: import('@supabase/supabase-js').Session | null) => {
+    // isNewSignIn = true only when event === 'SIGNED_IN' (not on page reload / session restore)
+    const processUserSession = async (
+      session: import('@supabase/supabase-js').Session | null,
+      isNewSignIn = false
+    ) => {
         if (session?.user) {
-            // FIX: The `.single()` method throws an error if the query returns more than one row,
-            // which can happen if there are duplicate profiles. This was changed to `.limit(1)`
-            // and selecting the first result to gracefully handle potential data duplication
-            // without crashing the authentication flow.
             const { data: profiles, error: profileError } = await supabase
               .from('profiles')
-              .select('username, avatar_url, theme_preference')
+              .select('username, avatar_url, theme_preference, signup_bonus_given')
               .eq('id', session.user.id)
               .limit(1);
 
             if (profileError) console.warn('Could not fetch user profile on auth change:', profileError.message);
             
             const profile = profiles?.[0];
+
+            // Detect new Google OAuth users and send welcome email + create profile
+            const provider = session.user.app_metadata?.provider;
+            const isGoogleUser = provider === 'google';
+            const isNewUser = !profile?.signup_bonus_given;
+            const createdAt = new Date(session.user.created_at);
+            const isRecentlyCreated = (Date.now() - createdAt.getTime()) < 30 * 60 * 1000; // within 30 min
+
+            if (isNewSignIn && isGoogleUser && isNewUser && isRecentlyCreated) {
+              const googleUsername =
+                session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name ||
+                session.user.email?.split('@')[0] ||
+                'user';
+
+              // Create profile with 10 sign-up bonus credits
+              const now = new Date();
+              const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+              supabase.from('profiles').upsert({
+                id: session.user.id,
+                username: profile?.username || googleUsername,
+                plan_tier: 'free',
+                plan_status: 'inactive',
+                total_credits: 10,
+                used_credits: 0,
+                credits_expire_at: expiresAt.toISOString(),
+                signup_bonus_given: true,
+                last_credits_allocated_at: now.toISOString(),
+              }, { onConflict: 'id' })
+              .then(({ error }) => {
+                if (error) console.warn('Could not create Google user profile:', error.message);
+              });
+
+              // Send welcome email (fire-and-forget)
+              fetch('/api/emails/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  type: 'welcome',
+                  email: session.user.email,
+                  username: googleUsername,
+                }),
+              }).catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
+            }
 
             const userEmail = session.user.email ?? '';
             const user: User = {
@@ -321,13 +365,13 @@ const App: React.FC = () => {
 
     // First, check the session on initial load to prevent race conditions.
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-        await processUserSession(session);
+        await processUserSession(session, false); // false = not a new sign-in (just restoring session)
         setLoading(false); // Set loading to false only after the initial session check is complete.
     });
 
     // Then, subscribe to any future auth state changes (e.g., login, logout).
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-        processUserSession(session);
+        processUserSession(session, event === 'SIGNED_IN');
 
         if (event === 'PASSWORD_RECOVERY') {
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
