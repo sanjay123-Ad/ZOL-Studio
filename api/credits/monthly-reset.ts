@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { sendMonthlyResetEmail } from '../_utils/emailService';
 
 // Helper function to get credits for a plan tier (planTier normalized to lowercase)
 function getCreditsForPlan(planTier: string | null, _billingPeriod: 'monthly' | 'annual'): number {
@@ -57,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // This includes any time on "today" (e.g. 14:30 same day), not just midnight
     const { data: usersToReset, error: fetchError } = await supabaseAdmin
       .from('profiles')
-      .select('id, plan_tier, billing_period, plan_status, total_credits, used_credits, next_credit_reset_at')
+      .select('id, plan_tier, billing_period, plan_status, total_credits, used_credits, next_credit_reset_at, username')
       .eq('plan_status', 'active')
       .not('next_credit_reset_at', 'is', null)
       .lte('next_credit_reset_at', endOfTodayUTC.toISOString());
@@ -117,6 +118,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         } else {
           resetCount++;
           console.log(`✅ Reset credits for user ${user.id}: ${newTotalCredits} credits (${monthlyCredits} new + ${remainingCredits} rollover)`);
+
+          // Send monthly reset notification email (fire-and-forget)
+          try {
+            const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(user.id);
+            const userEmail = authUser?.user?.email;
+            if (userEmail) {
+              const username = (user as any).username || userEmail.split('@')[0];
+              sendMonthlyResetEmail(userEmail, username, monthlyCredits, remainingCredits, user.plan_tier || 'basic')
+                .catch((emailErr) => console.error(`Monthly reset email failed for ${userEmail}:`, emailErr));
+            }
+          } catch (emailLookupErr) {
+            console.error(`Failed to look up email for user ${user.id}:`, emailLookupErr);
+          }
         }
       } catch (error) {
         console.error(`Error processing user ${user.id}:`, error);

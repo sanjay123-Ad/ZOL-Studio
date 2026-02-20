@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { sendPaymentConfirmationEmail } from '../_utils/emailService';
 
 // Helper function to map variant ID to plan tier
 function getPlanTierFromVariantId(variantId: string): 'basic' | 'pro' | 'agency' | null {
@@ -347,7 +348,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Get current profile to check if this is a plan change or renewal
       const { data: currentProfile } = await supabaseAdmin
         .from('profiles')
-        .select('plan_tier, total_credits, used_credits, credits_expire_at, signup_bonus_given')
+        .select('plan_tier, total_credits, used_credits, credits_expire_at, signup_bonus_given, username')
         .eq('id', userId)
         .single();
 
@@ -514,6 +515,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log(`   Subscription ID: ${subscriptionId}`);
         console.log(`   Renews At: ${renewsAt || 'N/A'}`);
         console.log(`Updated profile data:`, JSON.stringify(updateData[0], null, 2));
+
+        // Send payment confirmation email (fire-and-forget)
+        const usernameForEmail = (currentProfile as any).username || customerEmail.split('@')[0];
+        sendPaymentConfirmationEmail(
+          customerEmail,
+          usernameForEmail,
+          planTier,
+          billingPeriod || 'monthly',
+          newTotalCredits
+        ).catch((emailErr) => console.error('Payment email send failed:', emailErr));
+
         return res.status(200).send('Webhook processed successfully');
       }
     }

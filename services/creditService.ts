@@ -129,6 +129,7 @@ export async function deductCredits(
 
     // Deduct credits
     const currentUsed = profile.used_credits || 0;
+    const previousRemaining = Math.max(0, (profile.total_credits || 0) - currentUsed);
     const newUsedCredits = currentUsed + creditsToDeduct;
     const remainingCredits = Math.max(0, (profile.total_credits || 0) - newUsedCredits);
 
@@ -148,6 +149,29 @@ export async function deductCredits(
 
     // Log credit usage (optional - for analytics)
     console.log(`✅ Deducted ${creditsToDeduct} credit(s) from user ${userId}. Remaining: ${remainingCredits}`);
+
+    // Send low-credits alert when crossing below 20 (only once per threshold cross)
+    const LOW_CREDITS_THRESHOLD = 20;
+    if (previousRemaining >= LOW_CREDITS_THRESHOLD && remainingCredits < LOW_CREDITS_THRESHOLD) {
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', userId)
+          .single();
+        if (authUser?.email) {
+          const username = profileData?.username || authUser.email.split('@')[0];
+          fetch('/api/emails/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'low_credits', email: authUser.email, username, remainingCredits }),
+          }).catch((emailErr) => console.warn('Low credits email send failed:', emailErr));
+        }
+      } catch (emailErr) {
+        console.warn('Low credits email lookup failed:', emailErr);
+      }
+    }
 
     return {
       success: true,
