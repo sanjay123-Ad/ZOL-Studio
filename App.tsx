@@ -31,6 +31,13 @@ import { PATHS } from './constants/paths';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import Analytics from './components/Analytics';
 
+// Ensure usernames conform to DB constraint: lowercase, allowed chars, max length.
+function makeSafeUsername(raw: any): string {
+  const base = (raw || '').toString().trim().toLowerCase();
+  const cleaned = base.replace(/[^a-z0-9._-]/g, '_').slice(0, 30);
+  return cleaned || `user_${Math.random().toString(36).slice(2,8)}`;
+}
+
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -333,29 +340,39 @@ const App: React.FC = () => {
             // so require recent creation instead to determine a fresh signup.
             if (isNewSignIn && isGoogleUser && isRecentlyCreated && !hasHandledGoogleWelcome.current) {
               hasHandledGoogleWelcome.current = true;
-              const googleUsername =
-                session.user.user_metadata?.full_name ||
+              const googleRaw = session.user.user_metadata?.full_name ||
                 session.user.user_metadata?.name ||
                 session.user.email?.split('@')[0] ||
-                'user';
+                '';
+              const googleUsername = makeSafeUsername(googleRaw);
 
-              // Create profile with 10 sign-up bonus credits
+              // Create profile with 10 sign-up bonus credits (use await and check errors)
               const now = new Date();
               const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-              supabase.from('profiles').upsert({
-                id: session.user.id,
-                username: profile?.username || googleUsername,
-                plan_tier: 'free',
-                plan_status: 'inactive',
-                total_credits: 10,
-                used_credits: 0,
-                credits_expire_at: expiresAt.toISOString(),
-                signup_bonus_given: true,
-                last_credits_allocated_at: now.toISOString(),
-              }, { onConflict: 'id' })
-              .then(({ error }) => {
-                if (error) console.warn('Could not create Google user profile:', error.message);
-              });
+              try {
+                const { data: upsertData, error: upsertError } = await supabase
+                  .from('profiles')
+                  .upsert({
+                    id: session.user.id,
+                    username: profile?.username || googleUsername,
+                    plan_tier: 'free',
+                    plan_status: 'inactive',
+                    total_credits: 10,
+                    used_credits: 0,
+                    credits_expire_at: expiresAt.toISOString(),
+                    signup_bonus_given: true,
+                    last_credits_allocated_at: now.toISOString(),
+                  }, { onConflict: 'id' })
+                  .select();
+
+                if (upsertError) {
+                  console.warn('Could not create Google user profile:', upsertError);
+                } else {
+                  console.log('Created/updated profile:', upsertData?.[0]);
+                }
+              } catch (upsertCatchError) {
+                console.error('Exception during profile upsert:', upsertCatchError);
+              }
 
               // Send welcome email (fire-and-forget) and log response
               fetch('/api/emails/send', {
