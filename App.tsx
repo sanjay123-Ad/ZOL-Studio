@@ -334,9 +334,11 @@ const App: React.FC = () => {
               userEmail: session.user.email,
             });
 
-            // Send welcome email for Google sign-ins if not already sent.
-            // Rely on the server-side flag (profiles.welcome_sent) for idempotency.
-            if (isNewSignIn && isGoogleUser && !hasHandledGoogleWelcome.current && profile?.welcome_sent !== true) {
+            // Send welcome email for newly created Google accounts.
+            // Previously we required `isNewUser` (signup_bonus_given === false).
+            // Some Google signups already had signup_bonus_given true (from other flows),
+            // so require recent creation instead to determine a fresh signup.
+            if (isNewSignIn && isGoogleUser && isRecentlyCreated && !hasHandledGoogleWelcome.current) {
               hasHandledGoogleWelcome.current = true;
               const googleRaw = session.user.user_metadata?.full_name ||
                 session.user.user_metadata?.name ||
@@ -372,23 +374,25 @@ const App: React.FC = () => {
                 console.error('Exception during profile upsert:', upsertCatchError);
               }
 
-              // Send welcome email via atomic server endpoint (fire-and-forget)
-              if (session.user?.id) {
-                fetch('/api/emails/send-welcome', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ userId: session.user.id }),
+              // Send welcome email (fire-and-forget) and log response
+              fetch('/api/emails/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  type: 'welcome',
+                  email: session.user.email,
+                  username: googleUsername,
+                }),
+              })
+                .then(async (res) => {
+                  try {
+                    const json = await res.json();
+                    console.log('[Email] welcome send response', json);
+                  } catch (err) {
+                    console.warn('[Email] welcome send non-json response', err);
+                  }
                 })
-                  .then(async (res) => {
-                    try {
-                      const json = await res.json();
-                      console.log('[Email] welcome send response', json);
-                    } catch (err) {
-                      console.warn('[Email] welcome send non-json response', err);
-                    }
-                  })
-                  .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
-              }
+                .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
             }
 
             const userEmail = session.user.email ?? '';

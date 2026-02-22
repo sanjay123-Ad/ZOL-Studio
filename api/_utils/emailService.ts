@@ -11,24 +11,18 @@ function getPlanDisplayName(planTier: string): string {
 
 // ─── 1. Welcome Email ───────────────────────────────────────────────────────
 
-export async function sendWelcomeEmail(to: string, username: string): Promise<any> {
+export async function sendWelcomeEmail(to: string, username: string): Promise<void> {
   try {
-    const resp = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM,
       to,
       subject: 'Welcome to Zol Studio AI! 🎨',
       html: welcomeEmailHtml(username),
     });
-    // If the provider returns an error payload, treat as failure so callers can react.
-    if ((resp as any)?.error) {
-      console.error('Failed to send welcome email:', (resp as any).error);
-      throw new Error('Failed to send welcome email');
-    }
-    console.log(`✅ Welcome email sent to ${to}`, resp);
-    return resp;
+    if (error) console.error('Failed to send welcome email:', error);
+    else console.log(`✅ Welcome email sent to ${to}`);
   } catch (err) {
     console.error('Exception sending welcome email:', err);
-    throw err;
   }
 }
 

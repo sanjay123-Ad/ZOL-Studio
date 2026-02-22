@@ -347,14 +347,12 @@ const AuthPage: React.FC = () => {
         }
       }
 
-      // Send welcome email via atomic server endpoint (fire-and-forget)
-      if (data.user?.id) {
-        fetch('/api/emails/send-welcome', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: data.user.id }),
-        }).catch((emailErr) => console.warn('Welcome email send failed:', emailErr));
-      }
+      // Send welcome email (fire-and-forget, don't block sign-up flow)
+      fetch('/api/emails/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'welcome', email, username }),
+      }).catch((emailErr) => console.warn('Welcome email send failed:', emailErr));
 
       setView('signup_success');
     }
