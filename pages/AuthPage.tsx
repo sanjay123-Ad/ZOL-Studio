@@ -339,7 +339,6 @@ const AuthPage: React.FC = () => {
             credits_expire_at: expiresAt.toISOString(),
             signup_bonus_given: true,
             last_credits_allocated_at: now.toISOString(),
-            welcome_email_sent: true, // mark as sent to avoid duplicates
           }, { onConflict: 'id' });
 
         if (profileError) {
@@ -349,7 +348,6 @@ const AuthPage: React.FC = () => {
       }
 
       // Send welcome email (fire-and-forget, don't block sign-up flow)
-      // We already set welcome_email_sent above to prevent duplicates.
       fetch('/api/emails/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
