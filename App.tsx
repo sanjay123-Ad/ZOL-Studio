@@ -334,11 +334,9 @@ const App: React.FC = () => {
               userEmail: session.user.email,
             });
 
-            // Send welcome email for newly created Google accounts.
-            // Previously we required `isNewUser` (signup_bonus_given === false).
-            // Some Google signups already had signup_bonus_given true (from other flows),
-            // so require recent creation instead to determine a fresh signup.
-            if (isNewSignIn && isGoogleUser && isRecentlyCreated && !hasHandledGoogleWelcome.current) {
+            // Send welcome email for Google sign-ins if not already sent.
+            // Rely on the server-side flag (profiles.welcome_sent) for idempotency.
+            if (isNewSignIn && isGoogleUser && !hasHandledGoogleWelcome.current && profile?.welcome_sent !== true) {
               hasHandledGoogleWelcome.current = true;
               const googleRaw = session.user.user_metadata?.full_name ||
                 session.user.user_metadata?.name ||
