@@ -374,25 +374,23 @@ const App: React.FC = () => {
                 console.error('Exception during profile upsert:', upsertCatchError);
               }
 
-              // Send welcome email (fire-and-forget) and log response
-              fetch('/api/emails/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  type: 'welcome',
-                  email: session.user.email,
-                  username: googleUsername,
-                }),
-              })
-                .then(async (res) => {
-                  try {
-                    const json = await res.json();
-                    console.log('[Email] welcome send response', json);
-                  } catch (err) {
-                    console.warn('[Email] welcome send non-json response', err);
-                  }
+              // Send welcome email via atomic server endpoint (fire-and-forget)
+              if (session.user?.id) {
+                fetch('/api/emails/send-welcome', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userId: session.user.id }),
                 })
-                .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
+                  .then(async (res) => {
+                    try {
+                      const json = await res.json();
+                      console.log('[Email] welcome send response', json);
+                    } catch (err) {
+                      console.warn('[Email] welcome send non-json response', err);
+                    }
+                  })
+                  .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
+              }
             }
 
             const userEmail = session.user.email ?? '';
