@@ -10,10 +10,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { userId } = req.body as { userId?: string };
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
-  const SUPABASE_URL = process.env.SUPABASE_URL || '';
+  const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('Missing SUPABASE_SERVICE_ROLE_KEY');
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
     return res.status(500).json({ error: 'Server misconfigured' });
   }
 
@@ -22,12 +22,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   });
 
   try {
-    // Fetch profile and welcome flag
+    // Get email from auth user record first (fail fast if not available)
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    if (userError || !userData?.user?.email) {
+      console.error('Could not get user email:', userError);
+      return res.status(500).json({ error: 'Failed to get user email' });
+    }
+    const email = userData.user.email;
+
+    // Fetch profile (use maybeSingle to avoid error if row doesn't exist)
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('welcome_sent, username')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       console.error('Error fetching profile for welcome:', profileError);
@@ -38,33 +46,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ success: false, message: 'Welcome already sent' });
     }
 
-    // Get email from auth user record
-    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
-    if (userError || !userData?.user?.email) {
-      console.error('Could not get user email:', userError);
-      return res.status(500).json({ error: 'Failed to get user email' });
-    }
-    const email = userData.user.email;
     const username = (profile && profile.username) || email.split('@')[0] || 'user';
 
-    // Send welcome email
-    await sendWelcomeEmail(email, username).catch((e) => {
+    // Send welcome email and capture provider response
+    const sendResp = await sendWelcomeEmail(email, username).catch((e) => {
       console.error('Failed to send welcome email:', e);
       throw e;
     });
 
-    // Mark welcome_sent = true
-    const { error: updateError } = await supabaseAdmin
+    // Upsert profile to mark welcome_sent = true (creates row if missing)
+    const { error: upsertError } = await supabaseAdmin
       .from('profiles')
-      .update({ welcome_sent: true })
-      .eq('id', userId);
+      .upsert({ id: userId, username, welcome_sent: true }, { onConflict: 'id' });
 
-    if (updateError) {
-      console.error('Failed to update welcome_sent:', updateError);
+    if (upsertError) {
+      console.error('Failed to upsert welcome_sent:', upsertError);
       return res.status(500).json({ error: 'Email sent but failed to update profile' });
     }
 
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, resend: sendResp });
   } catch (err) {
     console.error('Unhandled error in send-welcome:', err);
     return res.status(500).json({ error: 'Internal server error' });

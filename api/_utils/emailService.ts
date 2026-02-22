@@ -11,7 +11,7 @@ function getPlanDisplayName(planTier: string): string {
 
 // ─── 1. Welcome Email ───────────────────────────────────────────────────────
 
-export async function sendWelcomeEmail(to: string, username: string): Promise<void> {
+export async function sendWelcomeEmail(to: string, username: string): Promise<any> {
   try {
     const resp = await resend.emails.send({
       from: FROM,
@@ -24,7 +24,8 @@ export async function sendWelcomeEmail(to: string, username: string): Promise<vo
       console.error('Failed to send welcome email:', (resp as any).error);
       throw new Error('Failed to send welcome email');
     }
-    console.log(`✅ Welcome email sent to ${to}`);
+    console.log(`✅ Welcome email sent to ${to}`, resp);
+    return resp;
   } catch (err) {
     console.error('Exception sending welcome email:', err);
     throw err;
