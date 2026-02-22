@@ -18,8 +18,7 @@ const LEMONSQUEEZY_STORE_ID = process.env.LEMONSQUEEZY_STORE_ID;
 const LEMONSQUEEZY_WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
 
 // Supabase admin client (service role) for server-side updates
-const SUPABASE_URL =
-  process.env.SUPABASE_URL || 'https://wtxwgkiiwibgfnpfkckx.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Helper function to map variant ID to plan tier

@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Resend } from 'resend';
+import { createClient } from '@supabase/supabase-js';
 
 const APP_URL = 'https://zolstudio.com';
 
@@ -90,6 +91,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const resend = new Resend(apiKey);
 
+    // Supabase admin client (optional but required for idempotent welcome emails)
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseAdmin = (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)
+      ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } })
+      : null;
+
     const { type, email, username, remainingCredits } = req.body || {};
 
     if (!type || !email || !username) {
@@ -102,6 +110,71 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (type === 'welcome') {
       subject = 'Welcome to Zol Studio AI!';
       html = welcomeEmailHtml(username);
+
+      // Idempotency: if Supabase admin client is available, find the auth user by email
+      // then check profiles.welcome_sent and skip sending if already true.
+      let foundUser: any = null;
+      let profileRow: any = null;
+      const emailLower = String(email).toLowerCase();
+
+      if (supabaseAdmin) {
+        try {
+          // Try to find a user via the Admin API (paginated listing)
+          let page = 1;
+          const perPage = 100;
+          while (!foundUser) {
+            // listUsers returns { users: [...] }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const { data: listData, error: listErr } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+            if (listErr) {
+              console.warn('supabase admin.listUsers error:', listErr);
+              break;
+            }
+            const users = listData?.users || [];
+            const u = users.find((u: any) => (u.email || '').toLowerCase() === emailLower);
+            if (u) {
+              foundUser = u;
+              break;
+            }
+            if (!users.length || users.length < perPage) break;
+            page++;
+          }
+
+          // If we found the auth user, fetch profile by id
+          if (foundUser) {
+            const userId = foundUser.id;
+            const { data, error: profileErr } = await supabaseAdmin
+              .from('profiles')
+              .select('id,welcome_sent')
+              .eq('id', userId)
+              .single();
+            if (!profileErr) profileRow = data;
+            else console.warn('Could not read profile for idempotency check:', profileErr);
+          } else {
+            // Fallback: if profiles table includes an email column, try selecting by email
+            try {
+              const { data, error: pErr } = await supabaseAdmin
+                .from('profiles')
+                .select('id,welcome_sent')
+                .ilike('email', email)
+                .limit(1)
+                .single();
+              if (!pErr && data) profileRow = data;
+            } catch (e) {
+              // ignore fallback errors
+            }
+          }
+        } catch (err) {
+          console.warn('Error during idempotency check:', err);
+        }
+
+        if (profileRow?.welcome_sent) {
+          console.log(`Welcome already sent to ${email} (profile id: ${profileRow.id}) — skipping send.`);
+          return res.status(200).json({ success: true, skipped: true });
+        }
+      }
+
     } else if (type === 'low_credits') {
       if (typeof remainingCredits !== 'number') {
         return res.status(400).json({ error: 'Missing remainingCredits' });
@@ -127,6 +200,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     console.log(`Email sent successfully! ID: ${data?.id}`);
+
+    // After successful welcome send, mark welcome_sent = true (best-effort)
+    if (type === 'welcome' && supabaseAdmin) {
+      try {
+        if (profileRow && profileRow.id) {
+          await supabaseAdmin.from('profiles').update({ welcome_sent: true }).eq('id', profileRow.id);
+          console.log('Marked profile.welcome_sent = true for', profileRow.id);
+        } else if (foundUser && foundUser.id) {
+          await supabaseAdmin.from('profiles').update({ welcome_sent: true }).eq('id', foundUser.id);
+          console.log('Marked profile.welcome_sent = true for', foundUser.id);
+        }
+      } catch (err) {
+        console.warn('Failed to update welcome_sent flag (non-fatal):', err);
+      }
+    }
+
     return res.status(200).json({ success: true, emailId: data?.id });
   } catch (err: any) {
     console.error('Unhandled error in /api/emails/send:', err?.message || err);
