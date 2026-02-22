@@ -435,7 +435,7 @@ async function createServer() {
         // Get current profile to check if this is a plan change or renewal
         const { data: currentProfile } = await supabaseAdmin
           .from('profiles')
-          .select('plan_tier, total_credits, used_credits, credits_expire_at, signup_bonus_given')
+          .select('plan_tier, total_credits, used_credits, credits_expire_at, signup_bonus_given, welcome_email_sent')
           .eq('id', userId)
           .single();
 
@@ -534,6 +534,7 @@ async function createServer() {
               credits_expire_at: expiresAt, // Monthly expiration (for both monthly and annual)
               next_credit_reset_at: nextResetAt, // Track next monthly reset date
               last_credits_allocated_at: new Date().toISOString(),
+              welcome_email_sent: currentProfile.welcome_email_sent === false ? true : currentProfile.welcome_email_sent,
             })
             .eq('id', userId)
             .select();
@@ -565,6 +566,7 @@ async function createServer() {
                 .insert({
                   id: userId,
                   plan_tier: planTier,
+                  welcome_email_sent: true,
                   plan_status: planStatus,
                   billing_period: billingPeriod, // Store billing period for pricing page UX
                   lemonsqueezy_customer_id: customerId || null,

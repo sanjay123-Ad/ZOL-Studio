@@ -308,7 +308,7 @@ const App: React.FC = () => {
 
             const { data: profiles, error: profileError } = await supabase
               .from('profiles')
-              .select('username, avatar_url, theme_preference, signup_bonus_given')
+              .select('username, avatar_url, theme_preference, signup_bonus_given, welcome_email_sent')
               .eq('id', session.user.id)
               .limit(1);
 
@@ -362,6 +362,7 @@ const App: React.FC = () => {
                     credits_expire_at: expiresAt.toISOString(),
                     signup_bonus_given: true,
                     last_credits_allocated_at: now.toISOString(),
+                    // do not mark welcome_email_sent here so we can atomically check-and-set below
                   }, { onConflict: 'id' })
                   .select();
 
@@ -374,25 +375,38 @@ const App: React.FC = () => {
                 console.error('Exception during profile upsert:', upsertCatchError);
               }
 
-              // Send welcome email (fire-and-forget) and log response
-              fetch('/api/emails/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  type: 'welcome',
-                  email: session.user.email,
-                  username: googleUsername,
-                }),
-              })
-                .then(async (res) => {
-                  try {
-                    const json = await res.json();
-                    console.log('[Email] welcome send response', json);
-                  } catch (err) {
-                    console.warn('[Email] welcome send non-json response', err);
-                  }
+              // Only send welcome email if it hasn't been sent already.
+              const alreadySent = upsertData?.[0]?.welcome_email_sent || profile?.welcome_email_sent;
+              if (!alreadySent) {
+                fetch('/api/emails/send', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    type: 'welcome',
+                    email: session.user.email,
+                    username: googleUsername,
+                  }),
                 })
-                .catch((emailErr) => console.warn('Google welcome email send failed:', emailErr));
+                  .then(async (res) => {
+                    try {
+                      const json = await res.json();
+                      console.log('[Email] welcome send response', json);
+                    } catch (err) {
+                      console.warn('[Email] welcome send non-json response', err);
+                    }
+                    // Mark welcome_email_sent true (best-effort)
+                    try {
+                      await supabase.from('profiles').update({ welcome_email_sent: true }).eq('id', session.user.id);
+                    } catch (updateErr) {
+                      console.warn('Failed to mark welcome_email_sent after sending:', updateErr);
+                    }
+                  })
+                  .catch((emailErr) => {
+                    console.warn('Google welcome email send failed:', emailErr);
+                  });
+              } else {
+                console.log('Welcome email already sent for user, skipping send.');
+              }
             }
 
             const userEmail = session.user.email ?? '';
